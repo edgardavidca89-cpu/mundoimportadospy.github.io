@@ -1,0 +1,2863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>MIP Delivery</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;}
+#loginScreen{position:fixed;inset:0;z-index:99;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;max-width:430px;margin:0 auto;}
+.l-ico{font-size:48px;margin-bottom:10px;text-align:center;}
+.l-brand{font-size:22px;font-weight:900;color:#e8400c;margin-bottom:4px;text-align:center;}
+.l-sub{font-size:13px;color:#999;margin-bottom:28px;text-align:center;}
+.l-card{background:#f7f7f7;border-radius:16px;padding:20px;width:100%;border:1px solid #e0e0e0;}
+.l-sel{width:100%;padding:13px 14px;border:2px solid #ddd;border-radius:10px;font-size:15px;background:#fff;color:#000;margin-bottom:10px;outline:none;-webkit-appearance:none;appearance:none;}
+.l-pin{width:100%;padding:13px 14px;border:2px solid #ddd;border-radius:10px;font-size:24px;background:#fff;color:#000;margin-bottom:6px;outline:none;text-align:center;}
+.l-pin:focus{border-color:#e8400c;}
+.l-err{min-height:18px;font-size:13px;color:#e8400c;text-align:center;margin-bottom:8px;}
+.l-btn{width:100%;padding:14px;background:#e8400c;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.l-btn:active{background:#c73209;}
+.hdr{background:#fff;padding:12px 16px;border-bottom:2px solid #e8e8e8;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.hdr-t{font-size:17px;font-weight:900;}
+.hdr-n{font-size:11px;color:#999;margin-top:1px;}
+.hdr-b{background:#e8400c;color:#fff;font-size:12px;font-weight:800;min-width:24px;height:24px;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:0 6px;}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e8e8e8;flex-shrink:0;}
+.tab{flex:1;padding:12px 4px;text-align:center;font-size:12px;font-weight:700;color:#aaa;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;touch-action:manipulation;}
+.tab.on{color:#e8400c;border-bottom-color:#e8400c;}
+.screens{flex:1;overflow:hidden;position:relative;}
+.sc{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding-bottom:24px;}
+.sc.on{display:block;}
+.card{background:#fff;border-radius:14px;margin:10px;border:1px solid #e0e0e0;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.07);}
+.card.done{opacity:.5;border-color:#a5d6a7;}
+.card.fail{opacity:.5;border-color:#ef9a9a;}
+.ct{padding:12px 12px 10px;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid #f5f5f5;}
+.cn{background:#e8400c;color:#fff;font-size:16px;font-weight:900;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ci{flex:1;min-width:0;}
+.cname{font-size:17px;font-weight:900;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ctel{font-size:13px;color:#e8400c;font-weight:700;margin-top:1px;}
+.cbadge{font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;flex-shrink:0;}
+.bp{background:#fff3e0;color:#e8400c;border:1px solid #f5a623;}
+.be{background:#e8f5e9;color:#1b7b2f;border:1px solid #4caf50;}
+.bf{background:#ffeaea;color:#c62828;border:1px solid #ef5350;}
+.cb{padding:10px 12px 12px;}
+.cdir{background:#f7f7f7;border-radius:8px;padding:10px;font-size:13px;line-height:1.7;color:#222;margin-bottom:10px;border:1px solid #ececec;}
+.ctotal{background:#e8400c;border-radius:10px;padding:12px;text-align:center;margin-bottom:10px;}
+.ctl{font-size:10px;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.ctn{font-size:26px;font-weight:900;color:#fff;}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.btns3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.btn{padding:14px 4px;border-radius:10px;border:none;font-size:13px;font-weight:800;cursor:pointer;text-align:center;touch-action:manipulation;font-family:inherit;}
+.btn:active{opacity:.75;}
+.bG{background:#1b7b2f;color:#fff;}
+.bR{background:#c62828;color:#fff;}
+.bB{background:#1565c0;color:#fff;}
+.bP{background:#6a1b9a;color:#fff;}
+.bW{background:#1b7b3b;color:#fff;}
+.sheet{position:fixed;inset:0;z-index:50;display:none;}
+.sheet.on{display:block;}
+.sbg{position:absolute;inset:0;background:rgba(0,0,0,.5);}
+.sbox{position:absolute;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:#fff;border-radius:18px 18px 0 0;padding:18px 18px 36px;}
+.shandle{width:32px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 14px;}
+.stitle{font-size:16px;font-weight:800;text-align:center;margin-bottom:12px;}
+.sopt{display:block;width:100%;padding:14px;background:#f7f7f7;border:1px solid #e8e8e8;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:8px;touch-action:manipulation;font-family:inherit;}
+.sopt:active{background:#eee;}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#e0e0e0;}
+.kbox{background:#fff;padding:14px;text-align:center;}
+.kn{font-size:26px;font-weight:900;}
+.kl{font-size:10px;color:#999;font-weight:700;text-transform:uppercase;margin-top:2px;}
+.toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;}
+.toast.on{opacity:1;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="l-ico">🚴</div>
+  <div class="l-brand">MUNDO IMPORTADOS</div>
+  <div class="l-sub">App de Delivery</div>
+  <div class="l-sub" style="font-size:10px;color:#999;margin-top:-22px;margin-bottom:24px;">v52 · generada 17/6 12:16 p. m.</div>
+  <div class="l-card">
+    <select class="l-sel" id="lNombre"><option value="">Tu nombre</option><option value="D1">CARLOS</option><option value="D1779742045892">JOSE</option><option value="D1780400268510">ALBERT</option><option value="D1780753935587">FLYING </option><option value="D1780754141740">SERGIO </option><option value="D1780785377402">EDGAR</option><option value="D1781201348340">NATY </option></select>
+    <input class="l-pin" id="lPin" type="tel" placeholder="PIN" autocomplete="off">
+    <div class="l-err" id="lErr"></div>
+    <button class="l-btn" onclick="doLogin()">INGRESAR</button>
+  </div>
+</div>
+
+<div class="app" id="mainApp" style="display:none;">
+  <div class="hdr">
+    <div><div class="hdr-t" id="hdrT">Mis Entregas</div><div class="hdr-n" id="hdrN"></div></div>
+    <div class="hdr-b" id="hdrB">0</div>
+  </div>
+  <div class="tabs">
+    <div class="tab on"  onclick="goTab('entregas',this)">📦 Entregas</div>
+    <div class="tab"     onclick="goTab('resumen',this)">📊 Resumen</div>
+    <div class="tab"     onclick="goTab('guia',this)">📚 Guia</div>
+  </div>
+  <div class="screens">
+    <div class="sc on" id="sc-entregas"></div>
+    <div class="sc"    id="sc-resumen"></div>
+    <div class="sc"    id="sc-guia"></div>
+  </div>
+</div>
+
+<div class="sheet" id="shMotivo">
+  <div class="sbg" onclick="closeMotivo()"></div>
+  <div class="sbox">
+    <div class="shandle"></div>
+    <div class="stitle">¿POR QUÉ NO SE ENTREGÓ?</div>
+    <button class="sopt" onclick="noEnt('RE-AGENDAR')">RE-AGENDAR</button>
+    <button class="sopt" onclick="noEnt('NO ESTABA')">NO ESTABA</button>
+    <button class="sopt" onclick="noEnt('NO QUISO')">NO QUISO</button>
+    <button class="sopt" onclick="closeMotivo()" style="color:#c62828;">CANCELAR</button>
+  </div>
+</div>
+
+<div class="sheet" id="shMsg">
+  <div class="sbg" onclick="closeMsg()"></div>
+  <div class="sbox">
+    <div class="shandle"></div>
+    <div class="stitle">Mensaje al cliente</div>
+    <div id="msgTxt" style="background:#075e54;border-radius:10px;padding:12px;font-size:13px;color:#fff;line-height:1.7;white-space:pre-wrap;margin-bottom:14px;max-height:180px;overflow-y:auto;"></div>
+    <button onclick="sendMsg()" style="width:100%;padding:13px;background:#25d366;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;touch-action:manipulation;font-family:inherit;">Abrir en WhatsApp</button>
+    <button onclick="closeMsg()" style="width:100%;padding:12px;background:#f0f0f0;color:#888;border:none;border-radius:10px;font-size:14px;cursor:pointer;touch-action:manipulation;font-family:inherit;">No avisar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── SELF-HEALING: if template wasn't generated via Centro de Despacho, don't crash
+(function(){
+  // Check sentinels that only exist in the template, never after injection
+  // Using split to avoid self-matching in this very check
+  var s1 = '__PEDIDOS' + '_JSON__';
+  var s2 = '__RIDERS' + '_JSON__';
+  var html = document.documentElement.innerHTML;
+  if (html.indexOf(s1) > -1 || html.indexOf(s2) > -1) {
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;"><h2 style="color:#e8400c;">App no generada</h2><p style="color:#666;">Este archivo es un template. Necesitás generar la app desde el <strong>Centro de Despacho</strong> y subir el archivo generado a Netlify.</p></div>';
+    throw new Error('Template not generated');
+  }
+})();
+
+var PEDIDOS = [{"id":"ia_1781625726272_5zfv9o","cliente":"alanis novedades","tel":"+595992262027","ciudad":"AREGUA","dir":"","notaInt":"","prod":"ORGANIZADOR DE BANO","variante":"","cant":1,"precio":140000,"rider":"D1","salida":"1","lat":-25.3154632,"lng":-57.3873936,"link":"https://maps.app.goo.gl/vKK4kQicDtwwkpLeA"},{"id":"ia_1781704368578_pwmcds","cliente":"Valentina","tel":"+595983159126","ciudad":"CAPIATA","dir":"por la tarde","notaInt":"","prod":"ANTIRONQUIDOS","variante":"","cant":1,"precio":69000,"rider":"D1","salida":"1","lat":-25.3747216,"lng":-57.4814148,"link":"https://maps.app.goo.gl/Wk1FFqtKucgdehmRA"},{"id":"ia_1781704478473_1vb3xm","cliente":"Nina Guerrero","tel":"+595981382168","ciudad":"SAN LORENZO","dir":"","notaInt":"","prod":"MESITA MULTIUSO","variante":"","cant":1,"precio":110000,"rider":"D1","salida":"1","lat":-25.3495285,"lng":-57.5128509,"link":"https://maps.app.goo.gl/arihCXSQeiZ5yguXA"},{"id":"ia_1781704658268_d6elf5","cliente":"Gabriel Oviedo","tel":"+595981631644","ciudad":"ASUNCION","dir":"","notaInt":"","prod":"MESITA MULTIUSO","variante":"","cant":1,"precio":110000,"rider":"D1","salida":"1","lat":-25.2808998,"lng":-57.639013,"link":"https://maps.app.goo.gl/4Wj9Q9Yt3cSq9uW59"},{"id":"ia_1781704763060_te0t8i","cliente":".","tel":"+595981211816","ciudad":"SAN LORENZO","dir":"","notaInt":"","prod":"ANTIRONQUIDOS","variante":"","cant":1,"precio":69000,"rider":"D1","salida":"1","lat":-25.3803387,"lng":-57.5178842,"link":"https://maps.app.goo.gl/u9PERVZsFAphbJmb8"},{"id":"ia_1781704813523_e0bed0","cliente":"Dionisio Sosa","tel":"+595982628152","ciudad":"SAN LORENZO","dir":"","notaInt":"","prod":"BARBEADORA","variante":"","cant":1,"precio":69000,"rider":"D1","salida":"1","lat":-25.3653157,"lng":-57.5129291,"link":"https://maps.app.goo.gl/hcEdSFLdUNnPgWXq7"},{"id":"ia_1781704951441_rddh7n","cliente":"Leticia Cáceres","tel":"+595981267128","ciudad":"GUARAMBARE","dir":"enviar a este ubicacion antes de las 16, posterior a eso se encontrara en Ñemby, pedir ubi","notaInt":"","prod":"MESITA MULTIUSO","variante":"","cant":1,"precio":110000,"rider":"D1","salida":"1","lat":-25.4919585,"lng":-57.458638,"link":"https://maps.app.goo.gl/f9MLndaqVVuvbysL7"},{"id":"ia_1781705132382_k4zhsf","cliente":"Juana Jimenez","tel":"+595982537242","ciudad":"LIMPIO","dir":"mesita color negro","notaInt":"","prod":"MESITA MULTIUSO","variante":"","cant":1,"precio":110000,"rider":"D1","salida":"1","lat":-25.1773066,"lng":-57.4678617,"link":"https://maps.app.goo.gl/aeUD8fD5UztvjGvX9"},{"id":"ia_1781705305441_5wru3e","cliente":"Baby S","tel":"+595981128241","ciudad":"ASUNCION","dir":"","notaInt":"","prod":"MESITA MULTIUSO","variante":"","cant":1,"precio":110000,"rider":"D1","salida":"1","lat":-25.360077,"lng":-57.6452744,"link":"https://maps.app.goo.gl/fWgVrtWT6ZTN75oN6"},{"id":"ia_1781705514483_eaofoe","cliente":"jose negreira","tel":"+595972123200","ciudad":"ASUNCION","dir":"ubicacion aproximada en la cuadra. Cervantes 950 c/Av Venezuela","notaInt":"","prod":"ANTIRONQUIDOS","variante":"","cant":1,"precio":69000,"rider":"D1","salida":"1","lat":-25.2706307,"lng":-57.5919921,"link":"https://maps.app.goo.gl/LguLEcc5mbaxmXMN7"}]
+var RIDERS = [{"id":"D1","nombre":"CARLOS","pin":"1111"},{"id":"D1779742045892","nombre":"JOSE","pin":"3333"},{"id":"D1780400268510","nombre":"ALBERT","pin":"1111"},{"id":"D1780753935587","nombre":"FLYING ","pin":"555"},{"id":"D1780754141740","nombre":"SERGIO ","pin":"666"},{"id":"D1780785377402","nombre":"EDGAR","pin":"999"},{"id":"D1781201348340","nombre":"NATY ","pin":"777"}]; // injected by Centro de Despacho
+var EDGAR = "+595981408690";
+var STOCK_EXTRA_ASIG = {"D1":{},"D1779742045892":{},"D1780400268510":{},"D1780753935587":{},"D1780754141740":{},"D1780785377402":{},"D1781201348340":{}}; // {riderId: {producto: cantidad}}
+var COSTOS_CIUDAD = {"LUQUE":20000,"MARIANO ROQUE ALONSO":20000,"ASUNCION":20000,"LAMBARE":20000,"FERNANDO DE LA MORA":20000,"SAN LORENZO":20000,"NEMBY":25000,"SAN ANTONIO":25000,"VILLA ELISA":25000,"LIMPIO":25000,"AREGUA":30000,"CAPIATA":20000,"ITAUGUA":30000,"YPANE":30000,"J AUGUSTO SALDIVAR":30000,"ITA":30000,"VILLETA":30000,"GUARAMBARE":30000,"CIUDAD DEL ESTE":40000,"ENCARNACION":40000,"CORONEL OVIEDO":40000,"CAAGUAZU":40000,"HERNANDARIAS":40000,"PRESIDENTE FRANCO":40000};  // {CIUDAD: costoEnvio} — tarifa global de Edgar
+var ENVIO_DEFAULT = 20000;  // costo si la ciudad no está en la tabla
+var TARIFAS_RIDER = {"D1":{"LAMBARE":25000,"NEMBY":30000,"LIMPIO":30000},"D1780753935587":{"SAN LORENZO":25000,"CAPIATA":23000}};  // {riderId: {CIUDAD: tarifa}} — tarifa específica de cada delivery
+var GOOGLE_API_KEY = "";  // API key compartida (si Edgar la cargó en Centro)
+var ORDEN_CERCANIA = ["LUQUE","MARIANO ROQUE ALONSO","ASUNCION","LAMBARE","FERNANDO DE LA MORA","SAN LORENZO","NEMBY","SAN ANTONIO","VILLA ELISA","LIMPIO","AREGUA","CAPIATA","ITAUGUA","YPANE","J AUGUSTO SALDIVAR","ITA","VILLETA","GUARAMBARE","CIUDAD DEL ESTE","ENCARNACION","CORONEL OVIEDO","CAAGUAZU","HERNANDARIAS","PRESIDENTE FRANCO"]; // [CIUDAD, CIUDAD, ...] orden desde Luque
+var FECHA_DIA = "2026-06-17";
+
+// ════════════════════════════════════════════════════════════════
+// v31: TRACKING GPS LIVE — Backend Cloudflare
+// El delivery NO ve esto. Edgar lo ve desde el Centro de Despacho.
+// Manda ubicación cada 5 min en segundo plano + eventos en tiempo real.
+// ════════════════════════════════════════════════════════════════
+var TRACKING_BACKEND = 'https://tracking-delivery.edgardavidca89.workers.dev';
+var TRACKING_ENABLED = true; // se puede desactivar si el backend no responde
+var _trackingInterval = null;
+var _trackingFailCount = 0;
+var _trackingLastSentAt = 0;
+
+// Manda ubicación periódica al backend (sin alertar al delivery, sin interrumpir nada)
+function __sendGPSPeriodico() {
+  if (!TRACKING_ENABLED || !rider || !rider.id) return;
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var data = {
+      deliveryId: rider.id,
+      deliveryNombre: rider.nombre || '',
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      hora: new Date().toISOString(),
+      accuracy: Math.round(pos.coords.accuracy || 0)
+    };
+    fetch(TRACKING_BACKEND + '/update', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data),
+      keepalive: true
+    }).then(function(r) {
+      _trackingFailCount = 0;
+      _trackingLastSentAt = Date.now();
+    }).catch(function(err) {
+      _trackingFailCount++;
+      // Si falla 5 veces seguidas, deshabilitar para no quemar batería
+      if (_trackingFailCount >= 5) {
+        TRACKING_ENABLED = false;
+        console.log('[GPS] backend no responde, tracking pausado');
+      }
+    });
+  }, function(err) {
+    // Permisos denegados o GPS apagado — silencioso, no molestar al delivery
+    console.log('[GPS] permiso denegado o sin GPS');
+  }, {
+    enableHighAccuracy: false, // ahorra batería
+    timeout: 30000,
+    maximumAge: 60000 // acepta posición de hasta 1 min atrás
+  });
+}
+
+// Manda evento especial (login, entregado, no_pudo, cierre_sesion)
+function __sendEventoGPS(tipo, extra) {
+  if (!TRACKING_ENABLED || !rider || !rider.id) return;
+  if (!navigator.geolocation) {
+    // Aún sin GPS, mandar el evento sin coordenadas
+    __postEvento({
+      deliveryId: rider.id,
+      deliveryNombre: rider.nombre || '',
+      tipo: tipo,
+      lat: null,
+      lng: null,
+      hora: new Date().toISOString(),
+      extra: extra || {}
+    });
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    __postEvento({
+      deliveryId: rider.id,
+      deliveryNombre: rider.nombre || '',
+      tipo: tipo,
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      hora: new Date().toISOString(),
+      accuracy: Math.round(pos.coords.accuracy || 0),
+      extra: extra || {}
+    });
+  }, function() {
+    __postEvento({
+      deliveryId: rider.id,
+      deliveryNombre: rider.nombre || '',
+      tipo: tipo,
+      lat: null,
+      lng: null,
+      hora: new Date().toISOString(),
+      extra: extra || {}
+    });
+  }, {enableHighAccuracy: true, timeout: 8000, maximumAge: 30000});
+}
+
+function __postEvento(payload) {
+  if (!TRACKING_ENABLED) return;
+  fetch(TRACKING_BACKEND + '/evento', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload),
+    keepalive: true
+  }).catch(function() { /* silencioso */ });
+}
+
+function __iniciarTracking() {
+  if (_trackingInterval) clearInterval(_trackingInterval);
+  // Mandar inmediatamente y después cada 5 min
+  __sendGPSPeriodico();
+  _trackingInterval = setInterval(__sendGPSPeriodico, 5 * 60 * 1000);
+}
+
+function __detenerTracking() {
+  if (_trackingInterval) {
+    clearInterval(_trackingInterval);
+    _trackingInterval = null;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// FIN TRACKING GPS
+// ════════════════════════════════════════════════════════════════
+
+// Coordenadas centroides de las ciudades del área metro Asunción (Paraguay)
+// Sirven como fallback cuando un pedido no tiene lat/lng propio
+var COORDS_CIUDAD = {
+  'LUQUE': {lat:-25.270, lng:-57.487},
+  'MARIANO ROQUE ALONSO': {lat:-25.205, lng:-57.532},
+  'ASUNCION': {lat:-25.290, lng:-57.628},
+  'LAMBARE': {lat:-25.341, lng:-57.616},
+  'FERNANDO DE LA MORA': {lat:-25.323, lng:-57.535},
+  'SAN LORENZO': {lat:-25.340, lng:-57.508},
+  'NEMBY': {lat:-25.395, lng:-57.535},
+  'VILLA ELISA': {lat:-25.367, lng:-57.591},
+  'LIMPIO': {lat:-25.166, lng:-57.495},
+  'SAN ANTONIO': {lat:-25.405, lng:-57.563},
+  'AREGUA': {lat:-25.302, lng:-57.395},
+  'CAPIATA': {lat:-25.355, lng:-57.434},
+  'ITAUGUA': {lat:-25.392, lng:-57.355},
+  'YPANE': {lat:-25.461, lng:-57.522},
+  'J AUGUSTO SALDIVAR': {lat:-25.495, lng:-57.566},
+  'JOSE AUGUSTO SALDIVAR': {lat:-25.495, lng:-57.566},
+  'ITA': {lat:-25.508, lng:-57.357},
+  'VILLETA': {lat:-25.494, lng:-57.568},
+  'GUARAMBARE': {lat:-25.485, lng:-57.452}
+};
+
+// Tiempos estimados desde LUQUE en minutos (referencia para mensaje "saliendo")
+var TIEMPOS_CIUDAD = {
+  'LUQUE':10, 'MARIANO ROQUE ALONSO':12, 'ASUNCION':18, 'LAMBARE':25, 'FERNANDO DE LA MORA':18,
+  'SAN LORENZO':14, 'NEMBY':22, 'VILLA ELISA':25, 'LIMPIO':22, 'SAN ANTONIO':28,
+  'AREGUA':20, 'CAPIATA':18, 'ITAUGUA':22, 'YPANE':30, 'J AUGUSTO SALDIVAR':32,
+  'JOSE AUGUSTO SALDIVAR':32, 'ITA':35, 'VILLETA':35, 'GUARAMBARE':35
+};
+
+// Variable global de la posición actual del delivery (cuando aprieta "Mi ubicación")
+var MI_LAT = null;
+var MI_LNG = null;
+// Usar fecha LOCAL (no UTC) para evitar bugs por zona horaria de Paraguay
+var _hoyD = new Date();
+var HOY = _hoyD.getFullYear() + '-' + String(_hoyD.getMonth()+1).padStart(2,'0') + '-' + String(_hoyD.getDate()).padStart(2,'0');
+
+// Normalizar nombres de ciudad (sin tildes, mayúsculas)
+function normCity(n) {
+  if (!n) return '';
+  return String(n).toUpperCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\./g,'').replace(/\s+/g,' ');
+}
+// Costo de envío — PRIORIDAD: tarifa del delivery logueado > tarifa global
+// Esto es lo que el delivery cobra a Edgar por entregar en cada ciudad.
+function costoCiudad(ciudad) {
+  var n = normCity(ciudad);
+  // 1) Tarifa específica del delivery logueado (si está cargada en Equipo)
+  if (rider && rider.id && TARIFAS_RIDER && TARIFAS_RIDER[rider.id]) {
+    var mias = TARIFAS_RIDER[rider.id];
+    if (mias[n] != null && mias[n] !== '') return +mias[n];
+    // Match por similitud
+    for (var k in mias) {
+      if (normCity(k) === n && mias[k] !== '') return +mias[k];
+    }
+  }
+  // 2) Tarifa global (fallback)
+  if (COSTOS_CIUDAD && COSTOS_CIUDAD[n] != null) return +COSTOS_CIUDAD[n];
+  if (COSTOS_CIUDAD) {
+    for (var k in COSTOS_CIUDAD) {
+      if (normCity(k) === n) return +COSTOS_CIUDAD[k];
+    }
+  }
+  return +ENVIO_DEFAULT || 20000;
+}
+// Orden de cercanía (índice menor = más cerca de Luque)
+function ordenCity(ciudad) {
+  var n = normCity(ciudad);
+  if (!ORDEN_CERCANIA) return 999;
+  for (var i = 0; i < ORDEN_CERCANIA.length; i++) {
+    if (normCity(ORDEN_CERCANIA[i]) === n) return i;
+  }
+  return 999;
+}
+
+var rider = null;
+var estados = {};
+var motivos = {};
+var costoServ = 0;
+var stockAsig = {};
+var ventasExtra = {};
+var msgTel = '';
+var motiId = '';
+
+function lsR(k) {
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch(e) { return null; }
+}
+function lsW(k, v) {
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
+}
+function save() {
+  lsW('mip_d_' + HOY, {estados:estados, motivos:motivos, costoServ:costoServ, ventasExtra:ventasExtra});
+}
+function gs(n) {
+  return 'Gs ' + (n || 0).toLocaleString('es-PY');
+}
+function waNum(tel) {
+  var n = (tel || '').replace(/\D/g, '');
+  if (n.indexOf('595') === 0) return n;
+  if (n.charAt(0) === '0') n = n.slice(1);
+  return '595' + n;
+}
+function showToast(m) {
+  var t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('on');
+  setTimeout(function() { t.classList.remove('on'); }, 2500);
+}
+function mis() {
+  // Filtrar pedidos del rider logueado y ordenar por cercanía desde Luque
+  var lista = PEDIDOS.slice();
+  // Si el rider está logueado, filtrar solo los suyos
+  if (rider && rider.id) {
+    lista = lista.filter(function(p){ return !p.rider || p.rider === rider.id; });
+  }
+
+  // ¿Hay orden manual guardado por el delivery?
+  var ordenManual = lsR('mip_d_orden_' + HOY);
+
+  if (ordenManual && Array.isArray(ordenManual) && ordenManual.length > 0) {
+    // Aplicar el orden manual. Pedidos que no estén en el orden, van al final.
+    var byId = {};
+    lista.forEach(function(p) { byId[p.id] = p; });
+    var ordenadosManual = [];
+    ordenManual.forEach(function(id) {
+      if (byId[id]) {
+        ordenadosManual.push(byId[id]);
+        delete byId[id];
+      }
+    });
+    // Pedidos nuevos (no en el orden manual) van al final
+    Object.keys(byId).forEach(function(id) { ordenadosManual.push(byId[id]); });
+    lista = ordenadosManual;
+  } else {
+    // Orden default: por cercanía a la posición actual del delivery (si la cargó),
+    // sino por orden de cercanía configurado en Centro
+    if (MI_LAT && MI_LNG) {
+      // Calcular distancia y minutos desde MI_LAT/LNG a cada pedido
+      lista.forEach(function(p) {
+        var coords = getCoordsPedido(p);
+        if (coords) {
+          p._distKm = haversine(MI_LAT, MI_LNG, coords.lat, coords.lng);
+          p.distMin = Math.round((p._distKm * 1.4 / 30) * 60);  // 30 km/h promedio
+        } else {
+          p._distKm = 9999;
+          p.distMin = 0;
+        }
+      });
+      lista.sort(function(a, b) { return (a._distKm||9999) - (b._distKm||9999); });
+    } else {
+      // Orden por cercanía a Luque (config Centro) + nombre
+      lista.sort(function(a, b) {
+        var oa = ordenCity(a.ciudad);
+        var ob = ordenCity(b.ciudad);
+        if (oa !== ob) return oa - ob;
+        return (a.cliente || '').localeCompare(b.cliente || '');
+      });
+    }
+  }
+  // ── v28: Calcular minutos estimados SIEMPRE (incluso sin GPS del delivery) ──
+  // Si no hay MI_LAT, usamos Luque como origen por default así el delivery siempre
+  // ve el badge de minutos al lado de cada cliente.
+  // Si después aprieta "Mi ubicación" u "Optimizar", se recalcula desde el GPS real.
+  var origenDefault = COORDS_CIUDAD['LUQUE'] || {lat: -25.270, lng: -57.487};
+  for (var k = 0; k < lista.length; k++) {
+    var pp = lista[k];
+    // Solo recalcular si no fue calculado ya con MI_LAT/MI_LNG
+    if (!pp.distMin || pp.distMin === 0) {
+      var coordsPP = getCoordsPedido(pp);
+      if (coordsPP) {
+        var distKmPP = haversine(origenDefault.lat, origenDefault.lng, coordsPP.lat, coordsPP.lng);
+        pp.distMin = Math.round((distKmPP * 1.4 / 30) * 60);
+      }
+    }
+  }
+  return lista;
+}
+
+// Devuelve {lat, lng} del pedido (propio o fallback a coords de ciudad)
+function getCoordsPedido(p) {
+  if (p.lat && p.lng) return {lat:p.lat, lng:p.lng};
+  var c = normCity(p.ciudad);
+  if (COORDS_CIUDAD[c]) return COORDS_CIUDAD[c];
+  return null;
+}
+
+// Guardar orden manual de pedidos
+function guardarOrdenManual(idsArray) {
+  lsW('mip_d_orden_' + HOY, idsArray);
+}
+
+// Limpiar orden manual (para volver al default)
+function limpiarOrdenManual() {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem('mip_d_orden_' + HOY);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// OPTIMIZACIÓN DE RUTA (v26)
+// Dos algoritmos para encontrar la mejor secuencia de entregas:
+// 1) GRATIS: Nearest Neighbor + 2-opt (corre local, sin internet)
+// 2) GOOGLE: Directions API con waypoint optimization (calles + tráfico real)
+// Ambos respetan los pedidos que el delivery ya marcó como urgentes.
+// ════════════════════════════════════════════════════════════════
+
+// Helper: distancia haversine en km entre dos puntos lat/lng
+function distKm(a, b) {
+  return haversine(a.lat, a.lng, b.lat, b.lng);
+}
+
+// Algoritmo Nearest Neighbor: elige el punto más cercano cada vez
+function nearestNeighbor(start, points) {
+  if (!points.length) return [];
+  var remaining = points.slice();
+  var route = [];
+  var current = start;
+  while (remaining.length) {
+    var bestIdx = 0;
+    var bestDist = distKm(current, remaining[0]);
+    for (var i = 1; i < remaining.length; i++) {
+      var d = distKm(current, remaining[i]);
+      if (d < bestDist) { bestDist = d; bestIdx = i; }
+    }
+    var next = remaining.splice(bestIdx, 1)[0];
+    route.push(next);
+    current = next;
+  }
+  return route;
+}
+
+// Algoritmo 2-opt: mejora una ruta dada haciendo swaps que reducen distancia total
+function twoOpt(start, route) {
+  if (route.length < 3) return route;
+  var best = route.slice();
+  var improved = true;
+  var maxIters = 100; // safety
+  while (improved && maxIters-- > 0) {
+    improved = false;
+    for (var i = 0; i < best.length - 1; i++) {
+      for (var j = i + 1; j < best.length; j++) {
+        // Calcular distancia antes del swap
+        var prevI = i === 0 ? start : best[i - 1];
+        var nextJ = j + 1 < best.length ? best[j + 1] : null;
+        var d1 = distKm(prevI, best[i]) + (nextJ ? distKm(best[j], nextJ) : 0);
+        // Distancia después del swap (invertir segmento i..j)
+        var d2 = distKm(prevI, best[j]) + (nextJ ? distKm(best[i], nextJ) : 0);
+        if (d2 < d1 - 0.001) {
+          // Invertir best[i..j]
+          var seg = best.slice(i, j + 1).reverse();
+          best = best.slice(0, i).concat(seg).concat(best.slice(j + 1));
+          improved = true;
+        }
+      }
+    }
+  }
+  return best;
+}
+
+// Calcular distancia total de una ruta dada
+function distanciaTotalRuta(start, route) {
+  if (!route.length) return 0;
+  var total = distKm(start, route[0]);
+  for (var i = 1; i < route.length; i++) total += distKm(route[i - 1], route[i]);
+  return total;
+}
+
+// Optimizar GRATIS (Nearest Neighbor + 2-opt)
+function optimizarGratis(start, pedidosOptimizables) {
+  // Convertir pedidos a puntos {id, lat, lng}
+  var puntos = [];
+  for (var i = 0; i < pedidosOptimizables.length; i++) {
+    var p = pedidosOptimizables[i];
+    var c = getCoordsPedido(p);
+    if (c) puntos.push({ id: p.id, lat: c.lat, lng: c.lng });
+  }
+  if (!puntos.length) return { ok: false, motivo: 'Ningún pedido tiene coordenadas para optimizar.' };
+  // 1) Nearest Neighbor
+  var ruta = nearestNeighbor(start, puntos);
+  // 2) 2-opt para mejorar
+  ruta = twoOpt(start, ruta);
+  var distTotal = distanciaTotalRuta(start, ruta);
+  return {
+    ok: true,
+    orden: ruta.map(function(p) { return p.id; }),
+    distKm: distTotal,
+    minutos: Math.round(distTotal * 1.4 / 30 * 60), // factor 1.4 para calles reales, 30 km/h promedio
+    motor: 'Algoritmo local (Nearest Neighbor + 2-opt)'
+  };
+}
+
+// Optimizar con GOOGLE Directions API
+// Necesita una API key guardada en localStorage 'mip_google_api_key'
+function optimizarGoogle(start, pedidosOptimizables, callback) {
+  // PRIORIDAD: API key local (cargada por el delivery) > heredada del Centro de Despacho
+  var apiKey = lsR('mip_google_api_key') || '';
+  if (!apiKey && typeof GOOGLE_API_KEY === 'string' && GOOGLE_API_KEY.length >= 20) {
+    apiKey = GOOGLE_API_KEY;
+  }
+  if (!apiKey || typeof apiKey !== 'string' || apiKey.length < 20) {
+    callback({ ok: false, motivo: 'Falta configurar la API key de Google. Edgar tiene que cargarla en el Centro de Despacho, o vos podés cargarla en Guía → Configurar Google API.' });
+    return;
+  }
+  // Convertir pedidos a waypoints
+  var puntos = [];
+  for (var i = 0; i < pedidosOptimizables.length; i++) {
+    var p = pedidosOptimizables[i];
+    var c = getCoordsPedido(p);
+    if (c) puntos.push({ id: p.id, lat: c.lat, lng: c.lng });
+  }
+  if (!puntos.length) {
+    callback({ ok: false, motivo: 'Ningún pedido tiene coordenadas para optimizar.' });
+    return;
+  }
+  if (puntos.length > 23) {
+    callback({ ok: false, motivo: 'Google Directions API soporta máximo 23 paradas. Usá el algoritmo gratis.' });
+    return;
+  }
+  // Armar URL con origen=start, destination=último punto, waypoints=optimize:true|p1|p2|...
+  // Usamos el origen también como destino (ruta vuelve a Luque/origen)
+  var waypoints = 'optimize:true|' + puntos.map(function(p) { return p.lat + ',' + p.lng; }).join('|');
+  var url = 'https://maps.googleapis.com/maps/api/directions/json' +
+            '?origin=' + start.lat + ',' + start.lng +
+            '&destination=' + start.lat + ',' + start.lng +
+            '&waypoints=' + encodeURIComponent(waypoints) +
+            '&mode=driving' +
+            '&departure_time=now' +
+            '&key=' + apiKey;
+  // Usar fetch
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status !== 'OK') {
+        callback({ ok: false, motivo: 'Google respondió: ' + (data.status || 'error') + (data.error_message ? ' - ' + data.error_message : '') });
+        return;
+      }
+      var ruta = data.routes[0];
+      var orderIdxs = ruta.waypoint_order; // [2, 0, 1, 3] = los waypoints en orden óptimo
+      var orderedIds = orderIdxs.map(function(idx) { return puntos[idx].id; });
+      // Sumar distancias y tiempos de cada leg (incluye vuelta al origen)
+      var distMetros = 0, segs = 0;
+      for (var l = 0; l < ruta.legs.length; l++) {
+        distMetros += ruta.legs[l].distance.value;
+        segs += (ruta.legs[l].duration_in_traffic && ruta.legs[l].duration_in_traffic.value) || ruta.legs[l].duration.value;
+      }
+      callback({
+        ok: true,
+        orden: orderedIds,
+        distKm: distMetros / 1000,
+        minutos: Math.round(segs / 60),
+        motor: 'Google Directions (calles + tráfico real)'
+      });
+    })
+    .catch(function(err) {
+      callback({ ok: false, motivo: 'Error de red: ' + (err.message || 'no se pudo contactar Google') });
+    });
+}
+
+// ────────────────────────────────────────────────────────────────
+// FLUJO DE OPTIMIZACIÓN: pide GPS, pregunta sobre orden manual,
+// optimiza, muestra propuesta, pide confirmación, aplica.
+// ────────────────────────────────────────────────────────────────
+
+var _optMotor = 'gratis'; // 'gratis' o 'google' — qué motor está pidiendo el usuario
+var _optStart = null;
+var _optPedidosTodos = null;
+var _optPedidosFijos = null; // los que NO se optimizan (urgentes/pinneados)
+
+function pedirOptimizar(motor) {
+  _optMotor = motor;
+  // Verificar GPS disponible
+  if (!navigator.geolocation) {
+    alert('Tu navegador no soporta GPS. Usá las flechitas para ordenar manualmente.');
+    return;
+  }
+  // Pedir ubicación actual
+  showToast('📡 Obteniendo tu ubicación...');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      _optStart = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      MI_LAT = _optStart.lat;
+      MI_LNG = _optStart.lng;
+      // Buscar pedidos pendientes (los entregados/cancelados no se optimizan)
+      var mp = mis();
+      var pendientes = [];
+      for (var i = 0; i < mp.length; i++) {
+        var st = estados[mp[i].id] || 'pendiente';
+        if (st === 'pendiente') pendientes.push(mp[i]);
+      }
+      if (pendientes.length < 2) {
+        alert('Necesitás al menos 2 pedidos pendientes para optimizar.');
+        return;
+      }
+      _optPedidosTodos = pendientes;
+      // ¿Hay orden manual previo?
+      var ordenManual = lsR('mip_d_orden_' + HOY);
+      if (ordenManual && Array.isArray(ordenManual) && ordenManual.length > 0) {
+        // Preguntar qué hacer con el orden manual
+        mostrarSheetOrdenManual();
+      } else {
+        _optPedidosFijos = [];
+        ejecutarOptimizacion();
+      }
+    },
+    function(err) {
+      var msg = '❌ No pude obtener tu ubicación. ';
+      if (err.code === 1) msg += 'Necesitás darle permiso al navegador.';
+      else if (err.code === 2) msg += 'Verificá tu GPS.';
+      else msg += 'Probá de nuevo.';
+      alert(msg);
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+function mostrarSheetOrdenManual() {
+  var bg = document.createElement('div');
+  bg.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:flex;align-items:flex-end;';
+  bg.id = '_optSheetBg';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;width:100%;max-width:430px;margin:0 auto;border-radius:18px 18px 0 0;padding:20px;';
+  box.innerHTML =
+    '<div style="width:32px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 14px;"></div>' +
+    '<div style="font-size:16px;font-weight:800;text-align:center;margin-bottom:8px;">¿Qué hago con tu orden manual?</div>' +
+    '<div style="font-size:12px;color:#666;text-align:center;margin-bottom:16px;line-height:1.5;">Ya tenés algunos pedidos reordenados a mano. ¿Querés que respete ese orden y optimice solo el resto, o reordeno todo desde cero?</div>' +
+    '<button onclick="optAplicarRespetarManual()" style="display:block;width:100%;padding:14px;background:#1b7b2f;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;font-family:inherit;touch-action:manipulation;">Respetar mi orden manual ✓</button>' +
+    '<button onclick="optAplicarReordenarTodo()" style="display:block;width:100%;padding:14px;background:#e8400c;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;font-family:inherit;touch-action:manipulation;">Reordenar todo desde cero</button>' +
+    '<button onclick="optCerrarSheet()" style="display:block;width:100%;padding:12px;background:#f0f0f0;color:#888;border:none;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit;touch-action:manipulation;">Cancelar</button>';
+  bg.appendChild(box);
+  document.body.appendChild(bg);
+}
+
+function optCerrarSheet() {
+  var bg = document.getElementById('_optSheetBg');
+  if (bg) bg.remove();
+}
+
+function optAplicarRespetarManual() {
+  optCerrarSheet();
+  // Los pedidos que tienen orden manual definido = "fijos"
+  // El resto se optimiza
+  var ordenManual = lsR('mip_d_orden_' + HOY) || [];
+  var idsManual = {};
+  for (var i = 0; i < ordenManual.length; i++) idsManual[ordenManual[i]] = true;
+  var fijos = [];
+  var optimizables = [];
+  // Los fijos van en el orden actual de mp (que ya respeta el manual)
+  for (var i = 0; i < _optPedidosTodos.length; i++) {
+    if (idsManual[_optPedidosTodos[i].id]) fijos.push(_optPedidosTodos[i]);
+    else optimizables.push(_optPedidosTodos[i]);
+  }
+  _optPedidosFijos = fijos;
+  _optPedidosTodos = optimizables;
+  ejecutarOptimizacion();
+}
+
+function optAplicarReordenarTodo() {
+  optCerrarSheet();
+  _optPedidosFijos = [];
+  ejecutarOptimizacion();
+}
+
+function ejecutarOptimizacion() {
+  showToast('⚡ Calculando mejor ruta...');
+  var procesarResultado = function(resultado) {
+    if (!resultado.ok) {
+      alert('No se pudo optimizar: ' + resultado.motivo);
+      return;
+    }
+    // Armar el orden final: primero los fijos en su orden, después los optimizados
+    var ordenFinal = _optPedidosFijos.map(function(p) { return p.id; }).concat(resultado.orden);
+    mostrarPropuesta(ordenFinal, resultado);
+  };
+  if (_optMotor === 'google') {
+    optimizarGoogle(_optStart, _optPedidosTodos, procesarResultado);
+  } else {
+    var resultado = optimizarGratis(_optStart, _optPedidosTodos);
+    procesarResultado(resultado);
+  }
+}
+
+function mostrarPropuesta(ordenIds, resultado) {
+  // Mapear ids a nombres
+  var byId = {};
+  for (var i = 0; i < _optPedidosTodos.length; i++) byId[_optPedidosTodos[i].id] = _optPedidosTodos[i];
+  for (var i = 0; i < _optPedidosFijos.length; i++) byId[_optPedidosFijos[i].id] = _optPedidosFijos[i];
+  var listaHtml = '';
+  for (var i = 0; i < ordenIds.length; i++) {
+    var p = byId[ordenIds[i]];
+    if (!p) continue;
+    var esFijo = false;
+    for (var f = 0; f < _optPedidosFijos.length; f++) if (_optPedidosFijos[f].id === p.id) { esFijo = true; break; }
+    listaHtml += '<div style="display:flex;align-items:center;padding:8px 10px;background:' + (esFijo ? '#fff3e0' : '#f7f7f7') + ';border-radius:8px;margin-bottom:6px;">';
+    listaHtml += '<div style="background:' + (esFijo ? '#e8400c' : '#1b7b2f') + ';color:#fff;width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;margin-right:10px;flex-shrink:0;">' + (i + 1) + '</div>';
+    listaHtml += '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (p.cliente || '?') + '</div><div style="font-size:11px;color:#999;">' + (p.ciudad || '') + (esFijo ? ' · 📌 fijo (manual)' : '') + '</div></div>';
+    listaHtml += '</div>';
+  }
+  var dist = resultado.distKm.toFixed(1);
+  var bg = document.createElement('div');
+  bg.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;';
+  bg.id = '_optPropuestaBg';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:14px;padding:18px;max-width:430px;width:100%;max-height:85vh;overflow-y:auto;';
+  box.innerHTML =
+    '<div style="font-size:18px;font-weight:900;color:#e8400c;margin-bottom:4px;">⚡ Ruta optimizada</div>' +
+    '<div style="font-size:11px;color:#666;margin-bottom:14px;">' + resultado.motor + '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">' +
+      '<div style="background:#f7f7f7;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:900;color:#000;">' + dist + ' km</div><div style="font-size:10px;color:#999;font-weight:700;">DISTANCIA TOTAL</div></div>' +
+      '<div style="background:#f7f7f7;border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:900;color:#000;">' + resultado.minutos + ' min</div><div style="font-size:10px;color:#999;font-weight:700;">TIEMPO ESTIMADO</div></div>' +
+    '</div>' +
+    listaHtml +
+    '<div style="font-size:10px;color:#888;margin:10px 0 14px;font-style:italic;line-height:1.5;">Los pedidos en naranja están fijos por tu orden manual. Los verdes fueron optimizados desde tu ubicación actual.</div>' +
+    '<button onclick="optAplicarOrden()" style="display:block;width:100%;padding:14px;background:#1b7b2f;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;font-family:inherit;touch-action:manipulation;">✓ Aplicar este orden</button>' +
+    '<button onclick="optCerrarPropuesta()" style="display:block;width:100%;padding:12px;background:#f0f0f0;color:#666;border:none;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit;touch-action:manipulation;">Cancelar</button>';
+  bg.appendChild(box);
+  document.body.appendChild(bg);
+  // Guardar el orden propuesto en una global temporal
+  window._optOrdenPropuesto = ordenIds;
+}
+
+function optCerrarPropuesta() {
+  var bg = document.getElementById('_optPropuestaBg');
+  if (bg) bg.remove();
+  window._optOrdenPropuesto = null;
+}
+
+function optAplicarOrden() {
+  if (!window._optOrdenPropuesto) return;
+  // Guardar como orden manual (la app va a respetar este orden)
+  guardarOrdenManual(window._optOrdenPropuesto);
+  optCerrarPropuesta();
+  showToast('✅ Ruta optimizada aplicada');
+  renderEntregas();
+}
+
+// ════════════════════════════════════════════════════════════════
+// v30: Ver ruta completa en Google Maps
+// Abre Google Maps con TODOS los pedidos del día como ruta multipunto
+// Inicia desde la ubicación del delivery (si la cargó) o desde Luque
+// ════════════════════════════════════════════════════════════════
+
+// v39: Mapa Leaflet embebido con pines y arrastrar para reordenar
+var _riderMap = null;
+var _riderMarkers = [];
+var _riderLeafletLoaded = false;
+
+function cargarLeafletRider(cb) {
+  if (_riderLeafletLoaded && window.L) { cb(); return; }
+  if (!document.getElementById('lflcss')) {
+    var link = document.createElement('link');
+    link.id = 'lflcss';
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(link);
+  }
+  if (window.L) { _riderLeafletLoaded = true; cb(); return; }
+  var urls = [
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+  ];
+  function tr(i) {
+    if (i >= urls.length) { alert('No se pudo cargar el mapa. Verificá tu internet.'); return; }
+    var s = document.createElement('script');
+    s.src = urls[i];
+    s.onload = function() { _riderLeafletLoaded = true; cb(); };
+    s.onerror = function() { tr(i + 1); };
+    document.head.appendChild(s);
+  }
+  tr(0);
+}
+
+function abrirMapaRider() {
+  var mp = mis();
+  var pendientes = [];
+  for (var i = 0; i < mp.length; i++) {
+    var st = estados[mp[i].id] || 'pendiente';
+    if (st === 'pendiente') pendientes.push(mp[i]);
+  }
+  if (!pendientes.length) {
+    alert('No tenés pedidos pendientes para mostrar en el mapa.');
+    return;
+  }
+  
+  var existing = document.getElementById('modalMapaRider');
+  if (existing) existing.remove();
+  
+  var overlay = document.createElement('div');
+  overlay.id = 'modalMapaRider';
+  overlay.style.cssText = 'position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;';
+  
+  overlay.innerHTML = 
+    '<div style="background:#1a1a1a;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">' +
+      '<div><div style="font-weight:900;font-size:18px;">🗺️ MAPA DE RUTA</div>' +
+      '<div style="font-size:11px;color:#aaa;" id="mapaInfoTotal">' + pendientes.length + ' paradas</div></div>' +
+      '<button onclick="document.getElementById(\'modalMapaRider\').remove()" style="background:#e8400c;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-weight:800;cursor:pointer;font-size:14px;">✕ Cerrar</button>' +
+    '</div>' +
+    '<div id="mapaRiderContainer" style="flex:1;background:#222;min-height:300px;"></div>' +
+    '<div id="listaPedidosMapa" style="background:#fff;max-height:40vh;overflow-y:auto;padding:8px;flex-shrink:0;"></div>';
+  document.body.appendChild(overlay);
+  
+  cargarLeafletRider(function() {
+    setTimeout(function() {
+      renderMapaRiderContent(pendientes);
+    }, 100);
+  });
+}
+
+function renderMapaRiderContent(pendientes) {
+  var cont = document.getElementById('mapaRiderContainer');
+  if (!cont) return;
+  cont.innerHTML = '';
+  
+  // Inicializar mapa centrado en Asunción
+  if (_riderMap) { try { _riderMap.remove(); } catch(e){} }
+  _riderMap = L.map(cont).setView([-25.302, -57.585], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap', maxZoom: 19
+  }).addTo(_riderMap);
+  
+  setTimeout(function() { if (_riderMap) _riderMap.invalidateSize(); }, 200);
+  
+  // Pin de MI ubicación
+  if (typeof MI_LAT !== 'undefined' && MI_LAT && MI_LNG) {
+    var miIcon = L.divIcon({
+      className: '',
+      html: '<div style="background:#1565c0;width:22px;height:22px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 8px rgba(0,0,0,0.6);"></div>',
+      iconSize: [22,22], iconAnchor: [11,11]
+    });
+    L.marker([MI_LAT, MI_LNG], { icon: miIcon }).addTo(_riderMap).bindPopup('📍 Tu ubicación');
+  }
+  
+  // Pines de pedidos
+  _riderMarkers = [];
+  var bounds = [];
+  pendientes.forEach(function(p, idx) {
+    var lat = p.lat, lng = p.lng;
+    if ((!lat || !lng) && p.link) {
+      try {
+        var m = p.link.match(/!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/);
+        if (m) { lat = +m[1]; lng = +m[2]; }
+        else {
+          m = p.link.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+          if (m) { lat = +m[1]; lng = +m[2]; }
+        }
+      } catch(e){}
+    }
+    if (!lat || !lng) {
+      // Sin coords, usar coords aproximadas de la ciudad
+      if (typeof COORDS_CIUDAD !== 'undefined' && COORDS_CIUDAD[p.ciudad]) {
+        lat = COORDS_CIUDAD[p.ciudad].lat;
+        lng = COORDS_CIUDAD[p.ciudad].lng;
+      }
+    }
+    if (!lat || !lng) return;
+    
+    var icon = L.divIcon({
+      className: '',
+      html: '<div style="background:#e8400c;color:#fff;width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;font-family:sans-serif;">' + (idx + 1) + '</div>',
+      iconSize: [36,36], iconAnchor: [18,18]
+    });
+    var marker = L.marker([lat, lng], { icon: icon }).addTo(_riderMap);
+    var total = (p.precio || 0) * (p.cant || 1);
+    marker.bindPopup(
+      '<div style="font-family:system-ui;min-width:200px;">' +
+      '<div style="font-weight:900;font-size:14px;color:#000;">' + (idx+1) + '. ' + (p.cliente || '—') + '</div>' +
+      '<div style="font-size:12px;color:#444;margin-top:4px;">' + (p.ciudad || '') + '</div>' +
+      '<div style="font-size:12px;margin-top:6px;">' + p.prod + ' x' + p.cant + '</div>' +
+      '<div style="font-weight:800;color:#e8400c;font-size:14px;margin-top:4px;">' + gs(total) + '</div>' +
+      '<div style="margin-top:6px;"><a href="tel:' + p.tel + '" style="color:#1565c0;">📞 ' + p.tel + '</a></div>' +
+      '</div>'
+    );
+    _riderMarkers.push(marker);
+    bounds.push([lat, lng]);
+  });
+  
+  if (bounds.length) {
+    try { _riderMap.fitBounds(bounds, { padding: [50,50], maxZoom: 14 }); } catch(e){}
+  }
+  
+  // Render lista debajo para reordenar
+  renderListaReordenable(pendientes);
+}
+
+function renderListaReordenable(pendientes) {
+  var lista = document.getElementById('listaPedidosMapa');
+  if (!lista) return;
+  var html = '<div style="font-size:11px;color:#666;font-weight:700;padding:6px;text-transform:uppercase;letter-spacing:1px;">Ordená tu ruta con \u25b2\u25bc (poné cuál entregás primero):</div>';
+  html += '<div id="listaPedidosOrden">';
+  pendientes.forEach(function(p, idx) {
+    var total = (p.precio || 0) * (p.cant || 1);
+    html += '<div class="rider-item" data-pid="' + p.id + '" style="display:flex;align-items:center;gap:8px;background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:8px;margin-bottom:6px;">';
+    html += '<div style="display:flex;flex-direction:column;gap:3px;">';
+    html += '<button onclick="moverPedidoRuta(\'' + p.id + '\',-1)"' + (idx===0?' disabled':'') + ' style="background:#e8400c;color:#fff;border:none;border-radius:6px;width:38px;height:28px;font-size:15px;font-weight:900;cursor:pointer;' + (idx===0?'opacity:.3;':'') + '">\u25b2</button>';
+    html += '<button onclick="moverPedidoRuta(\'' + p.id + '\',1)"' + (idx===pendientes.length-1?' disabled':'') + ' style="background:#e8400c;color:#fff;border:none;border-radius:6px;width:38px;height:28px;font-size:15px;font-weight:900;cursor:pointer;' + (idx===pendientes.length-1?'opacity:.3;':'') + '">\u25bc</button>';
+    html += '</div>';
+    html += '<div style="background:#1565c0;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0;">' + (idx + 1) + '</div>';
+    html += '<div style="flex:1;min-width:0;">';
+    html += '<div style="font-weight:800;font-size:14px;color:#000;">' + (p.ciudad || '\u2014') + '</div>';
+    html += '<div style="font-size:12px;color:#444;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (p.cliente || '\u2014') + ' \u00b7 ' + p.prod + '</div>';
+    html += '</div>';
+    html += '<div style="font-weight:900;color:#e8400c;font-size:13px;font-family:JetBrains Mono,monospace;">' + gs(total) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  lista.innerHTML = html;
+}
+
+window.moverPedidoRuta = function(pid, dir){
+  var cont = document.getElementById('listaPedidosOrden');
+  if(!cont) return;
+  var items = Array.prototype.slice.call(cont.querySelectorAll('.rider-item'));
+  var ids = items.map(function(it){ return it.dataset.pid; });
+  var i = ids.indexOf(pid);
+  var j = i + dir;
+  if(i<0 || j<0 || j>=ids.length) return;
+  var t = ids[i]; ids[i]=ids[j]; ids[j]=t;
+  // fusionar con el orden completo de mis() preservando los no listados
+  var mp = mis();
+  var fullIds = mp.map(function(p){ return p.id; });
+  var pendSet = {}; ids.forEach(function(id){ pendSet[id]=true; });
+  var pIdx = 0, nuevoFull = [];
+  fullIds.forEach(function(id){
+    if(pendSet[id]){ nuevoFull.push(ids[pIdx++]); }
+    else { nuevoFull.push(id); }
+  });
+  lsW('mip_d_orden_' + HOY, nuevoFull);
+  var nuevo = nuevoFull.map(function(id){ return mp.find(function(p){ return p.id===id; }); }).filter(Boolean);
+  renderMapaRiderContent(nuevo);
+  if (typeof renderEntregas === 'function') renderEntregas();
+};
+
+function verRutaCompletaEnMapa() {
+  var mp = mis();
+  var pendientes = [];
+  for (var i = 0; i < mp.length; i++) {
+    var st = estados[mp[i].id] || 'pendiente';
+    if (st === 'pendiente') pendientes.push(mp[i]);
+  }
+  if (!pendientes.length) {
+    alert('No tenés pedidos pendientes en la ruta para mostrar.');
+    return;
+  }
+  if (pendientes.length > 23) {
+    alert('Google Maps soporta hasta 23 paradas. Tenés ' + pendientes.length + ' pendientes. Mostrar las primeras 23.');
+    pendientes = pendientes.slice(0, 23);
+  }
+  
+  // Construir URL de Google Maps con waypoints
+  // Formato: https://www.google.com/maps/dir/origen/destino1/destino2/.../destinoN
+  // El último punto es el destino, los del medio son waypoints
+  
+  // Origen: GPS del delivery si está disponible, sino Luque
+  var origen;
+  if (MI_LAT && MI_LNG) {
+    origen = MI_LAT + ',' + MI_LNG;
+  } else {
+    origen = '-25.270,-57.487'; // Luque centro como default
+  }
+  
+  // Construir cada parada usando el LINK del cliente si está, o lat/lng, o ciudad
+  var paradas = [];
+  for (var i = 0; i < pendientes.length; i++) {
+    var p = pendientes[i];
+    var parada = '';
+    if (p.lat && p.lng) {
+      parada = p.lat + ',' + p.lng;
+    } else if (p.link && p.link.trim()) {
+      // Si tiene link, extraer coords del link si es posible
+      var coords = extraerCoordsURL ? extraerCoordsURL(p.link) : null;
+      if (coords) {
+        parada = coords.lat + ',' + coords.lng;
+      } else {
+        // Si no se pueden extraer coords, usar ciudad
+        parada = encodeURIComponent((p.ciudad || '') + ', Paraguay');
+      }
+    } else {
+      parada = encodeURIComponent((p.ciudad || '') + ', Paraguay');
+    }
+    paradas.push(parada);
+  }
+  
+  // Armar URL: dir/origen/parada1/parada2/.../paradaN
+  var url = 'https://www.google.com/maps/dir/' + origen + '/' + paradas.join('/');
+  
+  // Agregar parámetros de viaje (modo conducción)
+  url += '/data=!3m1!4b1!4m2!4m1!3e0';
+  
+  // Mostrar resumen antes de abrir
+  var distEst = 0;
+  if (MI_LAT && MI_LNG) {
+    var prev = {lat: MI_LAT, lng: MI_LNG};
+    for (var i = 0; i < pendientes.length; i++) {
+      var c = getCoordsPedido(pendientes[i]);
+      if (c) {
+        distEst += haversine(prev.lat, prev.lng, c.lat, c.lng);
+        prev = c;
+      }
+    }
+  } else {
+    var prevP = {lat: -25.270, lng: -57.487};
+    for (var i = 0; i < pendientes.length; i++) {
+      var c2 = getCoordsPedido(pendientes[i]);
+      if (c2) {
+        distEst += haversine(prevP.lat, prevP.lng, c2.lat, c2.lng);
+        prevP = c2;
+      }
+    }
+  }
+  var tiempoEst = Math.round(distEst * 1.4 / 30 * 60); // 30 km/h promedio con factor calles
+  
+  var msg = '🗺️ RUTA COMPLETA\n\n' +
+            '• Pedidos: ' + pendientes.length + '\n' +
+            '• Distancia estimada: ' + distEst.toFixed(1) + ' km\n' +
+            '• Tiempo estimado: ' + tiempoEst + ' min\n' +
+            '• Origen: ' + (MI_LAT ? 'Tu ubicación actual' : 'Luque (default)') + '\n\n' +
+            '¿Abrir en Google Maps?';
+  
+  if (!confirm(msg)) return;
+  window.open(url, '_blank');
+}
+
+// Configurar API key de Google
+function configurarGoogleApiKey() {
+  var actual = lsR('mip_google_api_key') || '';
+  var nueva = prompt('Pegá tu API key de Google Cloud (Directions API).\n\nSi no tenés, pedísela a Edgar.\n\nActual: ' + (actual ? actual.substring(0, 10) + '...' : '(vacía)'), actual);
+  if (nueva === null) return;
+  if (nueva.trim() === '') {
+    if (typeof localStorage !== 'undefined') localStorage.removeItem('mip_google_api_key');
+    showToast('API key borrada');
+  } else {
+    lsW('mip_google_api_key', nueva.trim());
+    showToast('✅ API key guardada');
+  }
+}
+
+// ────────────────────────────────────────
+// CONTROL DE ORDEN DE PEDIDOS (sesión 7)
+// ────────────────────────────────────────
+
+function cargarMiUbicacion() {
+  if (!navigator.geolocation) {
+    alert('Tu navegador no soporta geolocalización. Usá el orden default.');
+    return;
+  }
+  showToast('📡 Obteniendo tu ubicación...');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      MI_LAT = pos.coords.latitude;
+      MI_LNG = pos.coords.longitude;
+      // Limpiar orden manual previo (la nueva ubicación tiene prioridad)
+      limpiarOrdenManual();
+      showToast('✅ Reordenado desde tu ubicación');
+      renderEntregas();
+    },
+    function(err) {
+      var msg = '❌ No pude obtener tu ubicación. ';
+      if (err.code === 1) msg += 'Necesitás darle permiso al navegador.';
+      else if (err.code === 2) msg += 'Verificá tu GPS.';
+      else msg += 'Probá de nuevo.';
+      alert(msg);
+    },
+    { enableHighAccuracy:true, timeout:10000, maximumAge:60000 }
+  );
+}
+
+function subirPedido(idx) {
+  var mp = mis();
+  if (idx <= 0 || idx >= mp.length) return;
+  // Intercambiar idx con idx-1 en la lista de IDs
+  var ids = mp.map(function(p){ return p.id; });
+  var tmp = ids[idx]; ids[idx] = ids[idx-1]; ids[idx-1] = tmp;
+  guardarOrdenManual(ids);
+  renderEntregas();
+  showToast('Subido al puesto ' + idx);
+}
+
+function bajarPedido(idx) {
+  var mp = mis();
+  if (idx < 0 || idx >= mp.length - 1) return;
+  var ids = mp.map(function(p){ return p.id; });
+  var tmp = ids[idx]; ids[idx] = ids[idx+1]; ids[idx+1] = tmp;
+  guardarOrdenManual(ids);
+  renderEntregas();
+  showToast('Bajado al puesto ' + (idx + 2));
+}
+
+function resetOrden() {
+  if (!confirm('¿Volver al orden default por cercanía?')) return;
+  limpiarOrdenManual();
+  // Si tenía MI_LAT, también limpiar para volver al orden por ciudad
+  MI_LAT = null;
+  MI_LNG = null;
+  renderEntregas();
+  showToast('Orden restaurado');
+}
+function esc(s) {
+  return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function initLogin() {
+  // Options already embedded in HTML - just restore saved state
+  var prev = lsR('mip_d_' + HOY);
+  if (prev) {
+    estados = prev.estados || {};
+    motivos = prev.motivos || {};
+    costoServ = prev.costoServ || 0;
+    ventasExtra = prev.ventasExtra || {};
+  }
+}
+
+function doLogin() {
+  var id = document.getElementById('lNombre').value;
+  var pin = document.getElementById('lPin').value.trim();
+  var errEl = document.getElementById('lErr');
+  errEl.textContent = '';
+  if (!id) { errEl.textContent = 'Selecciona tu nombre'; return; }
+  if (!pin) { errEl.textContent = 'Ingresa tu PIN'; return; }
+  // Find rider from injected RIDERS data
+  var found = null;
+  for (var i = 0; i < RIDERS.length; i++) {
+    if (RIDERS[i].id === id) {
+      var configuredPin = String(RIDERS[i].pin || '').trim();
+      // Aceptar PIN configurado, o '1111' como fallback si no hay PIN, o si el PIN es '1111' igual
+      if (configuredPin === String(pin) || (!configuredPin && pin === '1111') || pin === '1111') {
+        found = RIDERS[i]; break;
+      }
+    }
+  }
+  if (!found) { errEl.textContent = 'PIN incorrecto. Probá con 1111.'; return; }
+  rider = found;
+  // Cargar stock extra desde el config inyectado (nuevo) o del legacy localStorage (viejo)
+  if (STOCK_EXTRA_ASIG && STOCK_EXTRA_ASIG[rider.id]) {
+    stockAsig = STOCK_EXTRA_ASIG[rider.id];
+  } else {
+    var st = lsR('mip_stock_riders');
+    if (st && st[rider.id]) stockAsig = st[rider.id];
+  }
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'flex';
+  document.getElementById('hdrN').textContent = rider.nombre + ' - ' + HOY;
+  renderEntregas();
+  renderResumen();
+  renderGuia();
+  // v31: iniciar tracking GPS (silencioso, no muestra nada al delivery)
+  __sendEventoGPS('login', {});
+  __iniciarTracking();
+}
+
+function goTab(name, el) {
+  var scs = document.querySelectorAll('.sc');
+  for (var i = 0; i < scs.length; i++) scs[i].classList.remove('on');
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('on');
+  document.getElementById('sc-' + name).classList.add('on');
+  el.classList.add('on');
+  var titles = {entregas:'Mis Entregas', resumen:'Mi Resumen', guia:'Guia'};
+  document.getElementById('hdrT').textContent = titles[name] || '';
+  if (name === 'resumen') renderResumen();
+  if (name === 'guia') renderGuia();
+}
+
+function renderEntregas() {
+  var mp = mis();
+  var pend = 0;
+  for (var i = 0; i < mp.length; i++) {
+    if (!estados[mp[i].id] || estados[mp[i].id] === 'pendiente') pend++;
+  }
+  var b = document.getElementById('hdrB');
+  b.textContent = pend;
+  b.style.background = pend > 0 ? '#e8400c' : '#30d158';
+  var sc = document.getElementById('sc-entregas');
+  if (!mp.length) {
+    sc.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#aaa;"><div style="font-size:40px;margin-bottom:12px;">📋</div><div style="font-size:15px;font-weight:700;">Sin entregas asignadas hoy</div></div>';
+    return;
+  }
+
+  // ── Panel de control de orden (Optimización + Mi ubicación) ──
+  var html = '';
+  html += '<div style="background:#fff;border-radius:12px;padding:12px;margin:12px;border:1px solid #e0e0e0;">';
+  html += '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px;">📍 Orden de entregas</div>';
+
+  if (MI_LAT && MI_LNG) {
+    html += '<div style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:8px 10px;font-size:11px;color:#1b7b2f;font-weight:700;margin-bottom:8px;">✅ Usando tu ubicación actual</div>';
+  } else {
+    html += '<div style="background:#fff8e1;border:1px solid #ffd966;border-radius:8px;padding:8px 10px;font-size:11px;color:#7b5b00;margin-bottom:8px;">💡 Tocá Optimizar para que la app calcule el orden más corto desde donde estás.</div>';
+  }
+
+  // Fila 1: Botones de optimización (NUEVO en v26)
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">';
+  html += '<button onclick="pedirOptimizar(\'gratis\')" style="background:#1b7b2f;color:#fff;border:none;padding:11px 6px;border-radius:8px;font-weight:800;cursor:pointer;font-family:inherit;font-size:12px;touch-action:manipulation;">⚡ Optimizar (gratis)</button>';
+  html += '<button onclick="pedirOptimizar(\'google\')" style="background:#1565c0;color:#fff;border:none;padding:11px 6px;border-radius:8px;font-weight:800;cursor:pointer;font-family:inherit;font-size:12px;touch-action:manipulation;">⚡ Optimizar (Google)</button>';
+  html += '</div>';
+  
+  // v39: Botones de mapa (Google Maps + Mapa interactivo con drag&drop)
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">';
+  html += '<button onclick="verRutaCompletaEnMapa()" style="background:#5b9aff;color:#fff;border:none;padding:11px 6px;border-radius:8px;font-weight:800;cursor:pointer;font-family:inherit;font-size:12px;touch-action:manipulation;">🗺️ Google Maps</button>';
+  html += '<button onclick="abrirMapaRider()" style="background:#1b7b2f;color:#fff;border:none;padding:11px 6px;border-radius:8px;font-weight:800;cursor:pointer;font-family:inherit;font-size:12px;touch-action:manipulation;">📍 Mapa + Reordenar</button>';
+  html += '</div>';
+
+  // Fila 2: Botones secundarios
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap;">';
+  html += '<button onclick="cargarMiUbicacion()" style="flex:1;min-width:100px;background:#e8400c;color:#fff;border:none;padding:9px;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:11px;touch-action:manipulation;">📍 Mi ubicación</button>';
+  if (lsR('mip_d_orden_' + HOY)) {
+    html += '<button onclick="resetOrden()" style="background:#f0f0f0;color:#000;border:1px solid #ddd;padding:9px 12px;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:11px;touch-action:manipulation;">↻ Default</button>';
+  }
+  html += '</div>';
+  html += '</div>';
+
+  for (var i = 0; i < mp.length; i++) {
+    var p = mp[i];
+    var est = estados[p.id] || 'pendiente';
+    var mot = motivos[p.id] || (typeof getMotivoGuardadoV41 === 'function' ? getMotivoGuardadoV41(p.id) : '');
+    var done = est === 'entregado';
+    var fail = est === 'no_entregado';
+    var total = (p.precio || 0) * (p.cant || 1);
+    var clienteUp = (p.cliente || '—').toUpperCase();
+    html += '<div class="card' + (done ? ' done' : fail ? ' fail' : '') + '" data-pid="' + p.id + '">';
+    // v41: Header CIUDAD jerárquico premium (sobrio, no negro/blanco)
+    html += '<div style="background:linear-gradient(180deg,#fff8e6,#fff3cf);border-bottom:2px solid #f5c000;padding:14px 16px 10px;">';
+    html += '<div style="font-size:10px;color:#7a5a00;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:2px;">CIUDAD</div>';
+    html += '<div style="font-size:22px;font-weight:900;color:#1a1a1a;letter-spacing:0.4px;line-height:1.1;">' + (p.ciudad || '—') + '</div>';
+    html += '</div>';
+    html += '<div class="cb" style="padding:14px;">';
+    // Cliente con número + flechas reordenar
+    html += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">';
+    html += '<div style="background:#e8400c;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;">' + (i + 1) + '</div>';
+    html += '<div style="flex:1;min-width:0;">';
+    html += '<div style="font-size:18px;font-weight:900;color:#000;line-height:1.2;letter-spacing:0.2px;">' + clienteUp + '</div>';
+    html += '<div style="font-size:14px;color:#444;font-weight:700;font-family:monospace;margin-top:3px;">📞 ' + p.tel + '</div>';
+    if (p.distMin && p.distMin > 0) {
+      html += '<div style="display:inline-block;background:#fff3e0;color:#e8400c;font-size:11px;padding:3px 8px;border-radius:6px;margin-top:6px;font-weight:800;">≈ ' + p.distMin + ' min</div>';
+    }
+    html += '</div>';
+    if (mp.length > 1) {
+      html += '<div style="display:flex;flex-direction:column;gap:3px;">';
+      if (i > 0) html += '<button onclick="subirPedido(' + i + ')" style="background:#f0f0f0;color:#444;border:1px solid #ddd;width:32px;height:24px;border-radius:5px;font-size:13px;cursor:pointer;font-family:inherit;padding:0;line-height:1;touch-action:manipulation;">▲</button>';
+      else html += '<div style="width:32px;height:24px;"></div>';
+      if (i < mp.length - 1) html += '<button onclick="bajarPedido(' + i + ')" style="background:#f0f0f0;color:#444;border:1px solid #ddd;width:32px;height:24px;border-radius:5px;font-size:13px;cursor:pointer;font-family:inherit;padding:0;line-height:1;touch-action:manipulation;">▼</button>';
+      else html += '<div style="width:32px;height:24px;"></div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    // PRODUCTO
+    html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:#f5f5f5;border-radius:8px;margin-bottom:8px;">';
+    html += '<div style="font-size:18px;">🛒</div>';
+    html += '<div style="flex:1;"><div style="font-size:15px;font-weight:700;color:#1a1a1a;">' + p.prod + ' <span style="color:#e8400c;font-weight:900;">x' + p.cant + '</span></div>';
+    if (p.variante) html += '<div style="font-size:13px;color:#555;margin-top:2px;font-weight:600;">' + p.variante + '</div>';
+    html += '</div></div>';
+    // NOTA cliente (negrita destacada)
+    if (p.dir) {
+      html += '<div style="background:#fffbe6;border:1.5px solid #ffd966;padding:10px 12px;border-radius:8px;margin-bottom:8px;">';
+      html += '<div style="font-size:10px;color:#7b5b00;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;">📝 NOTA</div>';
+      html += '<div style="font-size:15px;color:#000;font-weight:800;line-height:1.4;">' + p.dir + '</div>';
+      html += '</div>';
+    }
+    // NOTA INTERNA
+    if (p.notaInt) {
+      html += '<div style="background:#ffeded;border:1.5px solid #ff7878;padding:10px 12px;border-radius:8px;margin-bottom:8px;">';
+      html += '<div style="font-size:10px;color:#a02020;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;">🔒 INSTRUCCIÓN</div>';
+      html += '<div style="font-size:14px;color:#000;font-weight:700;line-height:1.4;">' + p.notaInt + '</div>';
+      html += '</div>';
+    }
+    if (mot) {
+      html += '<div style="background:#fff5f5;border:1.5px solid #ff7878;padding:8px 12px;border-radius:8px;margin-bottom:8px;color:#a02020;font-weight:700;font-size:13px;">⚠️ ' + mot + '</div>';
+    }
+    // TOTAL A COBRAR
+    html += '<div style="background:linear-gradient(135deg,#e8400c,#d63808);color:#fff;padding:14px;border-radius:10px;text-align:center;margin-top:6px;box-shadow:0 2px 6px rgba(232,64,12,0.25);">';
+    html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;opacity:0.9;">MONTO A COBRAR</div>';
+    html += '<div style="font-size:30px;font-weight:900;font-family:system-ui,sans-serif;margin-top:3px;line-height:1;">' + gs(total) + '</div>';
+    html += '</div>';
+    if (!done && !fail) {
+      // v41: 2 botones cuadrados ENTREGADO/CANCELADO (sin RE-AGENDAR separado)
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">';
+      html += '<button onclick="entregado(\'' + p.id + '\')" style="background:#1b7b2f;color:#fff;border:none;padding:18px 8px;border-radius:12px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;touch-action:manipulation;box-shadow:0 2px 4px rgba(27,123,47,0.3);">✅ ENTREGADO</button>';
+      html += '<button onclick="abrirCanceladoV41(\'' + p.id + '\')" style="background:#c52424;color:#fff;border:none;padding:18px 8px;border-radius:12px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;touch-action:manipulation;box-shadow:0 2px 4px rgba(197,36,36,0.3);">❌ CANCELADO</button>';
+      html += '</div>';
+      // v41: Botones secundarios cuadrados
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">';
+      html += '<button onclick="doCall(\'' + p.tel + '\')" style="background:#1565c0;color:#fff;border:none;padding:14px 8px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;touch-action:manipulation;">📞 Llamar</button>';
+      html += '<button onclick="doMap(' + i + ')" style="background:#7b3eb8;color:#fff;border:none;padding:14px 8px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;touch-action:manipulation;">📍 Mapa</button>';
+      html += '</div>';
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">';
+      html += '</div>';
+    } else {
+      html += '<div class="btns2">';
+      html += '<button class="btn bB" onclick="doCall(\'' + p.tel + '\')">📞 Llamar</button>';
+      html += '<button class="btn bP" onclick="doMap(' + i + ')">📍 Mapa</button>';
+      html += '</div>';
+      if (fail) {
+        html += '<button class="btn bW" style="width:100%;margin-top:8px;" onclick="prepMsg(\'' + p.tel + '\',\'' + esc(p.cliente) + '\',\'' + esc(p.prod) + '\',\'' + esc(mot) + '\')">WA al cliente</button>';
+      }
+      // Botón para revertir el estado y volver a pendiente
+      html += '<button class="btn" style="width:100%;margin-top:8px;background:#fff3cd;color:#7b5b00;border:1px solid #ffd966;font-weight:700;cursor:pointer;touch-action:manipulation;font-family:inherit;" onclick="revertirEstado(\'' + p.id + '\')">↻ Cambiar / corregir estado</button>';
+    }
+    html += '</div></div>';
+  }
+  sc.innerHTML = html;
+}
+
+function revertirEstado(id) {
+  if (!confirm('¿Volver este pedido a pendiente? Vas a poder marcarlo de nuevo.')) return;
+  delete estados[id];
+  delete motivos[id];
+  save();
+  renderEntregas();
+  renderResumen();
+  showToast('Volvió a pendiente');
+}
+
+// v34: Re-agendar pedido para otro día
+function abrirReagendarRider(id) {
+  var mp = mis();
+  var p = null;
+  for (var i = 0; i < mp.length; i++) { if (mp[i].id === id) { p = mp[i]; break; } }
+  if (!p) return;
+  
+  // Calcular fechas sugeridas
+  var hoy = new Date();
+  var manana = new Date(hoy); manana.setDate(hoy.getDate() + 1);
+  var pasado = new Date(hoy); pasado.setDate(hoy.getDate() + 2);
+  var fmt = function(d) { return d.toISOString().split('T')[0]; };
+  var fmtH = function(d) { return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0'); };
+  
+  var existing = document.getElementById('modalReagendarR');
+  if (existing) existing.remove();
+  
+  var overlay = document.createElement('div');
+  overlay.id = 'modalReagendarR';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:flex-end;justify-content:center;padding:0;';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+  
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-width:500px;width:100%;max-height:88vh;overflow-y:auto;';
+  box.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
+      '<div style="font-size:20px;font-weight:800;color:#f5a623;">🔄 RE-AGENDAR</div>' +
+      '<button onclick="document.getElementById(\'modalReagendarR\').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#666;">✕</button>' +
+    '</div>' +
+    '<div style="background:#f5f5f5;padding:10px;border-radius:8px;margin-bottom:14px;font-size:13px;color:#333;">' +
+      '<b>' + (p.cliente || '—') + '</b><br>' +
+      '<span style="color:#666;font-size:12px;">' + (p.prod || '') + ' · ' + (p.ciudad || '') + '</span>' +
+    '</div>' +
+    '<label style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;font-weight:700;display:block;margin-bottom:6px;">¿Para cuándo?</label>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">' +
+      '<button onclick="document.getElementById(\'reaFechaR\').value=\'' + fmt(manana) + '\';marcarFechaActiva(this)" class="reaFB" style="padding:12px;border:1px solid #ddd;background:#fff;border-radius:8px;font-weight:600;cursor:pointer;color:#333;">Mañana<br><small style="color:#888;">' + fmtH(manana) + '</small></button>' +
+      '<button onclick="document.getElementById(\'reaFechaR\').value=\'' + fmt(pasado) + '\';marcarFechaActiva(this)" class="reaFB" style="padding:12px;border:1px solid #ddd;background:#fff;border-radius:8px;font-weight:600;cursor:pointer;color:#333;">Pasado<br><small style="color:#888;">' + fmtH(pasado) + '</small></button>' +
+    '</div>' +
+    '<input type="date" id="reaFechaR" value="' + fmt(manana) + '" style="width:100%;padding:12px;background:#fff;border:1px solid #ddd;color:#333;border-radius:8px;margin-bottom:14px;font-family:inherit;font-size:14px;">' +
+    '<label style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;font-weight:700;display:block;margin-bottom:6px;">Motivo</label>' +
+    '<select id="reaMotivoR" style="width:100%;padding:12px;background:#fff;border:1px solid #ddd;color:#333;border-radius:8px;margin-bottom:14px;font-family:inherit;font-size:14px;">' +
+      '<option value="cliente_pide">Cliente lo pide para esa fecha</option>' +
+      '<option value="no_estaba">No estaba en casa</option>' +
+      '<option value="cliente_no_responde">Cliente no contesta</option>' +
+      '<option value="otro">Otro</option>' +
+    '</select>' +
+    '<div style="display:flex;gap:8px;">' +
+      '<button onclick="document.getElementById(\'modalReagendarR\').remove()" style="flex:1;padding:14px;background:#f5f5f5;color:#333;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:14px;">Cancelar</button>' +
+      '<button onclick="confirmarReagendarRider(\'' + id + '\')" style="flex:2;padding:14px;background:#f5a623;color:#000;font-weight:800;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;">🔄 Re-agendar</button>' +
+    '</div>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+
+function marcarFechaActiva(btn) {
+  document.querySelectorAll('.reaFB').forEach(function(b) { b.style.background = '#fff'; b.style.borderColor = '#ddd'; });
+  btn.style.background = '#fff7e6'; btn.style.borderColor = '#f5a623';
+}
+
+function confirmarReagendarRider(id) {
+  var fechaNueva = document.getElementById('reaFechaR').value;
+  var motivo = document.getElementById('reaMotivoR').value;
+  if (!fechaNueva) { alert('Elegí una fecha'); return; }
+  
+  // Marcar localmente como 'reagendado'
+  estados[id] = 'reagendado';
+  motivos[id] = 'Reagendado al ' + fechaNueva + ' (' + motivo + ')';
+  save();
+  
+  // Notificar al backend con evento
+  __sendEventoGPS('reagendado', {
+    pedidoId: id,
+    fechaNueva: fechaNueva,
+    motivo: motivo
+  });
+  
+  document.getElementById('modalReagendarR').remove();
+  renderEntregas();
+  renderResumen();
+  showToast('🔄 Re-agendado para ' + fechaNueva);
+}
+
+function entregado(id) {
+  estados[id] = 'entregado';
+  save();
+  renderEntregas();
+  renderResumen();
+  // v31: enviar evento GPS al backend (silencioso, el delivery no lo ve)
+  var ped = null;
+  var mp = mis();
+  for (var i = 0; i < mp.length; i++) { if (mp[i].id === id) { ped = mp[i]; break; } }
+  __sendEventoGPS('entregado', {
+    pedidoId: id,
+    cliente: ped ? ped.cliente : '',
+    ciudad: ped ? ped.ciudad : '',
+    producto: ped ? ped.prod : ''
+  });
+  showToast('Entregado registrado');
+}
+
+function openMotivo(id) {
+  motiId = id;
+  document.getElementById('shMotivo').classList.add('on');
+}
+function closeMotivo() {
+  document.getElementById('shMotivo').classList.remove('on');
+  motiId = '';
+}
+function noEnt(mot) {
+  if (!motiId) return;
+  var id = motiId;
+  estados[id] = 'no_entregado';
+  motivos[id] = mot;
+  save();
+  closeMotivo();
+  renderEntregas();
+  renderResumen();
+  // v31: evento GPS al backend (silencioso)
+  var ped = null;
+  var mp = mis();
+  for (var i = 0; i < mp.length; i++) { if (mp[i].id === id) { ped = mp[i]; break; } }
+  __sendEventoGPS('no_pudo', {
+    pedidoId: id,
+    cliente: ped ? ped.cliente : '',
+    ciudad: ped ? ped.ciudad : '',
+    producto: ped ? ped.prod : '',
+    motivo: mot
+  });
+  showToast('Registrado');
+}
+
+function doCall(tel) {
+  if (tel) window.location.href = 'tel:' + tel;
+}
+function doMap(idx) {
+  var mp = mis();
+  if (idx < 0 || idx >= mp.length) return;
+  var p = mp[idx];
+  var url = '';
+  // REGLA v25: el LINK DEL CLIENTE manda. Se abre TAL CUAL, sin tocar nada.
+  // No extraemos coords, no transformamos, no "mejoramos". Copy-paste puro.
+  if (p.link && p.link.trim()) {
+    url = p.link.trim();
+  } else if (p.lat && p.lng) {
+    url = 'https://www.google.com/maps/search/?api=1&query=' + p.lat + ',' + p.lng;
+  } else {
+    var partes = [];
+    if (p.dir && p.dir.trim()) {
+      var n = p.dir.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+      if (/\d|calle|avenida|av\.|esquina|barrio/i.test(n)) partes.push(n);
+    }
+    if (p.ciudad) partes.push(p.ciudad);
+    partes.push('Paraguay');
+    url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(partes.join(', '));
+  }
+  window.open(url, '_blank');
+}
+
+// Extraer coords de URL (replicado para que esté en el template)
+// IMPORTANTE: si el zoom es < 15, las coords probablemente son de la ciudad,
+// no del pin real. Devolver null para usar el link bruto.
+function extraerCoordsURL(url) {
+  if (!url || typeof url !== 'string') return null;
+  // Detectar zoom
+  var zoom = null;
+  var mZ = url.match(/,(\d+\.?\d*)z/);
+  if (mZ) zoom = parseFloat(mZ[1]);
+  if (zoom == null) {
+    mZ = url.match(/[?&]z=(\d+\.?\d*)/);
+    if (mZ) zoom = parseFloat(mZ[1]);
+  }
+  // Zoom bajo = link a la ciudad, no al pin
+  if (zoom != null && zoom < 15) return null;
+
+  var m = url.match(/[@/](-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) {
+    var lat = parseFloat(m[1]); var lng = parseFloat(m[2]);
+    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return {lat:lat, lng:lng};
+  }
+  m = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) {
+    var lat = parseFloat(m[1]); var lng = parseFloat(m[2]);
+    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return {lat:lat, lng:lng};
+  }
+  m = url.match(/[?&]ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) {
+    var lat = parseFloat(m[1]); var lng = parseFloat(m[2]);
+    if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) return {lat:lat, lng:lng};
+  }
+  return null;
+}
+function doAviso(tel, nom, prod, total, modo, minutos) {
+  // modo: 'saliendo' o 'cerca'
+  var nombreRider = (rider && rider.nombre) ? rider.nombre : 'Carlos';
+  var primerNombre = nombreRider.split(' ')[0];
+  var m = '';
+  if (modo === 'cerca') {
+    // Mensaje "cerca" — incluye minutos estimados
+    var minTxt = (minutos && minutos > 0) ? ' Estimamos llegar a tu ubicación en aproximadamente ' + minutos + ' minutos.' : ' Estoy en camino a tu ubicación.';
+    m = 'Hola, soy ' + primerNombre + '.' + minTxt + '\n\n';
+    m += 'Producto: ' + prod + '\n';
+    m += 'Total: ' + gs(total) + ' (efectivo o transferencia)\n\n';
+    m += 'Te llamo al llegar. Gracias.';
+  } else {
+    // Mensaje "saliendo" — sin emojis (Edgar pidió cambio porque generaba errores visuales)
+    m = 'Hola. Soy ' + nombreRider + ', Delivery de Mundo Importados PY.\n\n';
+    m += 'Tu pedido ya está conmigo para entrega hoy.\n';
+    m += 'Estimamos llegar a tu zona en 1 a 2 horas\n\n';
+    m += 'Te llevamos: ' + prod + ' - ' + gs(total).replace('Gs ', '') + ' (Efectivo o transferencia)\n';
+    m += 'Gracias por aguardar.';
+  }
+  window.open('https://wa.me/' + waNum(tel) + '?text=' + encodeURIComponent(m), '_blank');
+}
+
+// Helpers que calculan minutos estimados antes de mandar
+function doAvisoSaliendo(idx, total) {
+  var mp = mis();
+  if (idx < 0 || idx >= mp.length) return;
+  var p = mp[idx];
+  // Saliendo dice "1 a 2 horas" fijo, no necesita cálculo
+  doAviso(p.tel, p.cliente, p.prod, total, 'saliendo', 0);
+}
+
+function doAvisoCerca(idx, total) {
+  var mp = mis();
+  if (idx < 0 || idx >= mp.length) return;
+  var p = mp[idx];
+  // Calcular minutos al pedido desde la ubicación actual del delivery (si la cargó)
+  var minutos = 0;
+  if (p.distMin && p.distMin > 0) {
+    minutos = p.distMin;
+  } else if (typeof MI_LAT !== 'undefined' && MI_LAT) {
+    var coords = getCoordsPedido(p);
+    if (coords) {
+      var distKm = haversine(MI_LAT, MI_LNG, coords.lat, coords.lng) * 1.4;
+      minutos = Math.round(distKm / 30 * 60);
+    }
+  }
+  doAviso(p.tel, p.cliente, p.prod, total, 'cerca', minutos);
+}
+
+// Haversine en kilómetros
+function haversine(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return 9999;
+  var R = 6371;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLon = (lon2 - lon1) * Math.PI / 180;
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function notifEdgar(tipo, p, mot) {
+  if (!EDGAR) return;
+  var total = (p.precio || 0) * (p.cant || 1);
+  var h = new Date().toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'});
+  var m;
+  if (tipo === 'entregado') {
+    m = 'ENTREGADO\n' + p.prod + ' x' + p.cant + '\n' + p.cliente + '\n' + p.ciudad + '\nCobrado: ' + gs(total) + '\n' + h + ' - ' + (rider ? rider.nombre : '');
+  } else {
+    m = 'NO PUDO\n' + p.prod + '\n' + p.cliente + ' - ' + p.tel + '\n' + p.ciudad + '\nMotivo: ' + mot + '\n' + h + ' - ' + (rider ? rider.nombre : '');
+  }
+  window.open('https://wa.me/' + EDGAR + '?text=' + encodeURIComponent(m));
+}
+function prepMsg(tel, nom, prod, mot) {
+  msgTel = tel;
+  var m = 'Hola ' + nom + '! Hoy intentamos entregarte ' + prod + ' pero no pudimos.\n\n';
+  if (mot === 'NO ESTABA') m += 'No te encontramos en casa. Cuando podemos reintentar?';
+  else if (mot === 'RE-AGENDAR') m += 'Necesitamos reprogramar tu entrega. Cuando te queda mejor?';
+  else if (mot === 'NO QUISO') m += 'Notamos que hubo un inconveniente. Podes contarnos que paso?';
+  else m += 'Cuando te queda bien que coordinemos?';
+  m += '\nGracias por tu paciencia!';
+  document.getElementById('msgTxt').textContent = m;
+  document.getElementById('shMsg').classList.add('on');
+}
+function sendMsg() {
+  var m = document.getElementById('msgTxt').textContent;
+  if (msgTel) window.open('https://wa.me/' + waNum(msgTel) + '?text=' + encodeURIComponent(m));
+  closeMsg();
+}
+function closeMsg() {
+  document.getElementById('shMsg').classList.remove('on');
+}
+
+function onCostoTipeo(input) {
+  // Actualizar costoServ y guardar
+  costoServ = parseInt(input.value.replace(/[^0-9]/g, '')) || 0;
+  save();
+
+  // Actualizar el desglose en vivo SIN re-render completo (para no perder foco)
+  // Recalcular cob (cobrado de entregados)
+  var mp = mis();
+  var cob = 0;
+  var envioSug = 0;
+  for (var i = 0; i < mp.length; i++) {
+    var st = estados[mp[i].id] || 'pendiente';
+    if (st === 'entregado') {
+      cob += (mp[i].precio || 0) * (mp[i].cant || 1);
+      envioSug += costoCiudad(mp[i].ciudad) * (mp[i].cant || 1);
+    }
+  }
+  var descuento = costoServ > 0 ? costoServ : envioSug;
+  var neto = cob - descuento;
+
+  // Update DOM elements directly
+  var elPagoLbl = document.getElementById('dPagoLbl');
+  if (elPagoLbl) elPagoLbl.textContent = '− Pago al delivery' + (costoServ > 0 ? ' (manual)' : ' (envío sugerido)');
+  var elPago = document.getElementById('dPago');
+  if (elPago) elPago.textContent = '−' + gs(descuento);
+  var elNeto = document.getElementById('dNeto');
+  if (elNeto) elNeto.textContent = gs(neto);
+  var elOk = document.getElementById('costoOk');
+  if (elOk) elOk.style.display = costoServ > 0 ? 'inline' : 'none';
+  var elSug = document.getElementById('sugerencia');
+  if (elSug && envioSug > 0) {
+    elSug.innerHTML = '📊 Sugerido por ciudad: ' + gs(envioSug) + (costoServ > 0 ? ' (no se usa, vos cargaste tu pago manual)' : ' (se usará si no cargás pago manual)');
+  }
+}
+
+function renderResumen() {
+  var mp = mis();
+  var ent = [], noe = [], pen = [];
+  for (var i = 0; i < mp.length; i++) {
+    var st = estados[mp[i].id] || 'pendiente';
+    if (st === 'entregado') ent.push(mp[i]);
+    else if (st === 'no_entregado') noe.push(mp[i]);
+    else pen.push(mp[i]);
+  }
+  var cob = 0;
+  for (var i = 0; i < ent.length; i++) cob += (ent[i].precio || 0) * (ent[i].cant || 1);
+  var neto = cob - costoServ;
+  var sc = document.getElementById('sc-resumen');
+  var h = '<div style="padding:12px;">';
+
+  // ── BLOQUE NUEVO: Resumen pedidos + stock arriba (lo que estaba en Guía) ──
+  var pC = {};
+  for (var i = 0; i < mp.length; i++) pC[mp[i].prod] = (pC[mp[i].prod]||0) + (mp[i].cant || 1);
+  var totC = 0;
+  for (var i = 0; i < mp.length; i++) totC += (mp[i].precio||0) * (mp[i].cant||1);
+  var prods = Object.keys(pC);
+  var sp = Object.keys(stockAsig);
+
+  // Bloque pedidos del día
+  h += '<div style="background:#1c1c1e;border-radius:14px;padding:16px;margin-bottom:10px;">';
+  h += '<div style="font-size:10px;font-weight:800;color:#f5a623;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">📦 TUS PEDIDOS DE HOY</div>';
+  if (prods.length) {
+    for (var i = 0; i < prods.length; i++) {
+      h += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #333;">';
+      h += '<span style="font-size:14px;color:#fff;">' + prods[i] + '</span>';
+      h += '<span style="font-size:15px;font-weight:900;color:#f5a623;">' + pC[prods[i]] + 'x</span></div>';
+    }
+    h += '<div style="display:flex;justify-content:space-between;padding-top:10px;"><span style="font-size:11px;color:#aaa;font-weight:700;">TOTAL A COBRAR</span><span style="font-size:17px;font-weight:900;color:#30d158;">' + totC.toLocaleString('es-PY') + ' Gs</span></div>';
+  } else {
+    h += '<span style="color:#888;font-size:13px;">Sin pedidos asignados</span>';
+  }
+  h += '</div>';
+
+  // Bloque stock del día (resumen)
+  if (sp.length) {
+    h += '<div style="background:#1c1c1e;border-radius:14px;padding:16px;margin-bottom:10px;">';
+    h += '<div style="font-size:10px;font-weight:800;color:#f5a623;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">📥 TU STOCK DE HOY</div>';
+    for (var i = 0; i < sp.length; i++) {
+      h += '<div style="display:flex;justify-content:space-between;padding:8px 0;' + (i<sp.length-1?'border-bottom:1px solid #333;':'') + '">';
+      h += '<span style="font-size:14px;font-weight:700;color:#fff;">' + sp[i] + '</span>';
+      h += '<span style="font-size:15px;font-weight:900;color:#f5a623;">' + stockAsig[sp[i]] + 'x</span></div>';
+    }
+    h += '</div>';
+  }
+
+  // ── PAGO POR SERVICIO con desglose en vivo (Lectura A: reemplaza cálculo de envíos) ──
+  // Calcular el envío sugerido automático (suma de envíos por ciudad de los entregados)
+  var envioSugerido = 0;
+  for (var i = 0; i < ent.length; i++) envioSugerido += costoCiudad(ent[i].ciudad) * (ent[i].cant || 1);
+  // Si Carlos cargó pago manual, ese reemplaza el envío sugerido. Si no, usar el sugerido.
+  var descuento = costoServ > 0 ? costoServ : envioSugerido;
+  var netoFinal = cob - descuento;
+
+  h += '<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid #e0e0e0;">';
+  h += '<div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;margin-bottom:8px;">💰 Tu pago por servicio total</div>';
+  h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">';
+  h += '<input type="tel" id="inpCosto" value="' + (costoServ || '') + '" placeholder="" style="flex:1;padding:11px;border:2px solid #ddd;border-radius:8px;font-size:18px;font-weight:800;color:#000;outline:none;background:#fff;" oninput="onCostoTipeo(this)">';
+  h += '<span style="color:#999;font-size:13px;">Gs</span>';
+  h += '<span id="costoOk" style="font-size:22px;color:#1b7b2f;display:' + (costoServ > 0 ? 'inline' : 'none') + ';">✓</span>';
+  h += '</div>';
+  // Mostrar el envío sugerido como referencia
+  if (envioSugerido > 0) {
+    h += '<div id="sugerencia" style="font-size:11px;color:#888;margin-bottom:8px;font-style:italic;">📊 Sugerido por ciudad: ' + gs(envioSugerido) + (costoServ > 0 ? ' (no se usa, vos cargaste tu pago manual)' : ' (se usará si no cargás pago manual)') + '</div>';
+  }
+  // Desglose en vivo (siempre visible, con IDs para actualizar sin perder foco)
+  h += '<div style="background:#f7f7f7;border-radius:8px;padding:10px 12px;font-size:12px;">';
+  h += '<div style="display:flex;justify-content:space-between;padding:3px 0;color:#555;"><span>Cobrado entregas</span><span style="font-weight:700;" id="dCob">' + gs(cob) + '</span></div>';
+  h += '<div style="display:flex;justify-content:space-between;padding:3px 0;color:#c62828;"><span id="dPagoLbl">− Pago al delivery' + (costoServ > 0 ? ' (manual)' : ' (envío sugerido)') + '</span><span style="font-weight:700;" id="dPago">−' + gs(descuento) + '</span></div>';
+  h += '<div style="display:flex;justify-content:space-between;padding:6px 0 2px;border-top:1px solid #ddd;margin-top:4px;"><span style="font-weight:800;">NETO a Edgar</span><span style="font-weight:900;color:#1b7b2f;font-size:14px;" id="dNeto">' + gs(netoFinal) + '</span></div>';
+  h += '</div></div>';
+
+  // Mi resumen (KPIs)
+  h += '<div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:12px;border:1px solid #e0e0e0;">';
+  h += '<div style="padding:12px 14px;border-bottom:1px solid #f5f5f5;"><div style="font-size:15px;font-weight:900;">Mi Resumen</div>';
+  h += '<div style="font-size:11px;color:#999;">' + (rider ? rider.nombre : '') + ' - ' + HOY + '</div></div>';
+  h += '<div class="kgrid">';
+  h += '<div class="kbox"><div class="kn" style="color:#f5a623;">' + mp.length + '</div><div class="kl">Asignados</div></div>';
+  h += '<div class="kbox"><div class="kn" style="color:#1b7b2f;">' + ent.length + '</div><div class="kl">Entregados</div></div>';
+  h += '<div class="kbox"><div class="kn" style="color:#c62828;">' + noe.length + '</div><div class="kl">Cancelados</div></div>';
+  h += '<div class="kbox"><div class="kn" style="color:#e8400c;">' + pen.length + '</div><div class="kl">Pendientes</div></div>';
+  h += '</div>';
+  h += '</div>';
+
+  if (noe.length) {
+    h += '<div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:12px;border:1px solid #e0e0e0;">';
+    h += '<div style="padding:10px 14px;border-bottom:1px solid #f5f5f5;font-size:11px;font-weight:800;color:#c62828;text-transform:uppercase;">Cancelados</div>';
+    for (var i = 0; i < noe.length; i++) {
+      var p = noe[i];
+      var mot2 = motivos[p.id] || '-';
+      h += '<div style="padding:10px 14px;border-bottom:1px solid #f5f5f5;display:flex;justify-content:space-between;align-items:center;">';
+      h += '<div><div style="font-size:14px;font-weight:700;">' + p.cliente + '</div>';
+      h += '<div style="font-size:12px;color:#999;">' + p.ciudad + ' - ' + p.tel + '</div>';
+      h += '<div style="font-size:12px;color:#c62828;">' + mot2 + '</div></div>';
+      h += '<button onclick="prepMsg(\'' + p.tel + '\',\'' + esc(p.cliente) + '\',\'' + esc(p.prod) + '\',\'' + esc(mot2) + '\')" style="background:#e8f5e9;color:#1b7b2f;border:1px solid #a5d6a7;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;touch-action:manipulation;font-family:inherit;">WA</button>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (ent.length) {
+    h += '<div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:12px;border:1px solid #e0e0e0;">';
+    h += '<div style="padding:10px 14px;border-bottom:1px solid #f5f5f5;font-size:11px;font-weight:800;color:#1b7b2f;text-transform:uppercase;">Entregados</div>';
+    for (var i = 0; i < ent.length; i++) {
+      var p = ent[i];
+      h += '<div style="padding:10px 14px;border-bottom:1px solid #f5f5f5;display:flex;justify-content:space-between;align-items:center;">';
+      h += '<div><div style="font-size:14px;font-weight:700;">' + p.cliente + '</div><div style="font-size:12px;color:#999;">' + p.prod + '</div></div>';
+      h += '<div style="font-size:14px;font-weight:800;color:#1b7b2f;">' + gs((p.precio || 0) * (p.cant || 1)) + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  // ── STOCK DETALLADO (2 columnas: Extra y Devuelve, sin "Pedidos") ──
+  if (sp.length) {
+    var ePP = {};
+    for (var i = 0; i < ent.length; i++) {
+      var k = ent[i].prod || '?';
+      ePP[k] = (ePP[k] || 0) + (ent[i].cant || 1);
+    }
+    h += '<div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:12px;border:1px solid #e0e0e0;">';
+    h += '<div style="padding:10px 14px;background:#1c1c1e;font-size:11px;font-weight:800;color:#f5a623;text-transform:uppercase;">Stock detallado</div>';
+    for (var si = 0; si < sp.length; si++) {
+      var prod = sp[si];
+      var sal = stockAsig[prod] || 0;
+      var eP = ePP[prod] || 0;
+      var ext = ventasExtra[prod] || 0;
+      var dev = Math.max(0, sal - eP - ext);
+      h += '<div style="padding:12px 14px;border-bottom:1px solid #f5f5f5;">';
+      h += '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">' + prod + '</div>';
+      // 2 columnas: Extra (vendido en calle) y Devuelve
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">';
+      h += '<div style="background:#f7f7f7;border-radius:8px;padding:10px 6px;text-align:center;"><div style="font-size:18px;font-weight:900;color:#1565c0;">' + ext + '</div><div style="font-size:10px;color:#999;font-weight:700;">EXTRA</div></div>';
+      h += '<div style="background:#f7f7f7;border-radius:8px;padding:10px 6px;text-align:center;"><div style="font-size:18px;font-weight:900;color:' + (dev > 0 ? '#c62828' : '#1b7b2f') + ';">' + dev + '</div><div style="font-size:10px;color:#999;font-weight:700;">DEVUELVE</div></div>';
+      h += '</div>';
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;">';
+      h += '<span style="font-size:12px;color:#999;">Ventas extra (calle):</span>';
+      h += '<div style="display:flex;align-items:center;gap:10px;">';
+      h += '<button onclick="xtra(' + si + ',-1)" style="width:32px;height:32px;background:#f0f0f0;border:1px solid #ddd;border-radius:8px;font-size:18px;font-weight:900;cursor:pointer;touch-action:manipulation;font-family:inherit;">-</button>';
+      h += '<span style="font-size:18px;font-weight:900;color:#1565c0;min-width:24px;text-align:center;">' + ext + '</span>';
+      h += '<button onclick="xtra(' + si + ',1)" style="width:32px;height:32px;background:#f0f0f0;border:1px solid #ddd;border-radius:8px;font-size:18px;font-weight:900;cursor:pointer;touch-action:manipulation;font-family:inherit;">+</button>';
+      h += '</div></div></div>';
+    }
+    h += '</div>';
+  }
+
+  h += '<button onclick="enviarReporte()" style="width:100%;padding:13px;background:#e8400c;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;touch-action:manipulation;font-family:inherit;">📨 Enviar reporte a Edgar</button>';
+  h += '<button onclick="copiarReporte()" style="width:100%;padding:12px;background:#1c1c1e;color:#f0f0f0;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;font-family:inherit;">Copiar reporte</button>';
+  h += '</div>';
+  sc.innerHTML = h;
+}
+
+function xtra(idx, delta) {
+  var sp = Object.keys(stockAsig);
+  if (idx < 0 || idx >= sp.length) return;
+  var prod = sp[idx];
+  ventasExtra[prod] = Math.max(0, (ventasExtra[prod] || 0) + delta);
+  save();
+  renderResumen();
+}
+
+function generarReporte() {
+  var mp = mis();
+  var ent = [], noe = [], pen = [];
+  for (var i = 0; i < mp.length; i++) {
+    var st = estados[mp[i].id] || 'pendiente';
+    if (st === 'entregado') ent.push(mp[i]);
+    else if (st === 'no_entregado') noe.push(mp[i]);
+    else pen.push(mp[i]);
+  }
+  // Total cobrado bruto = lo que Carlos recibió en mano por entregas
+  var cobBruto = 0;
+  // Total envíos = suma de los costos de envío de cada ciudad entregada
+  var totEnvios = 0;
+  for (var i = 0; i < ent.length; i++) {
+    cobBruto += (ent[i].precio || 0) * (ent[i].cant || 1);
+    totEnvios += costoCiudad(ent[i].ciudad);
+  }
+  var totProductos = cobBruto - totEnvios;
+
+  // Stock extra: ventas espontáneas en la calle
+  var sp = Object.keys(stockAsig);
+  var ePP = {};
+  for (var i = 0; i < ent.length; i++) { var k = ent[i].prod || '?'; ePP[k] = (ePP[k] || 0) + (ent[i].cant || 1); }
+
+  // Fecha formateada DD/MM
+  var fechaFmt = HOY;
+  try {
+    var parts = HOY.split('-');
+    fechaFmt = parts[2] + '/' + parts[1] + '/' + parts[0];
+  } catch(e) {}
+
+  var sep = '====================';
+  var lin = '--------------------';
+  var txt = '*CIERRE DE DIA*\n';
+  txt += fechaFmt + ' - ' + (rider ? rider.nombre : '') + '\n' + sep + '\n\n';
+  txt += 'Pedidos asignados: ' + mp.length + '\n';
+  txt += 'Entregados: ' + ent.length + '\n';
+  txt += 'Cancelados: ' + noe.length + '\n';
+  if (pen.length) txt += 'Pendientes: ' + pen.length + '\n';
+  txt += '\n' + lin + '\nCOBRADO\n' + lin + '\n';
+  txt += 'Total cobrado bruto: ' + gs(cobBruto) + '\n';
+  // Lectura A: si hay pago manual, ese reemplaza el cálculo automático de envíos
+  if (costoServ > 0) {
+    txt += 'Pago al delivery (manual): ' + gs(costoServ) + '\n';
+    txt += '(envio sugerido por ciudad: ' + gs(totEnvios) + ' - no aplica)\n';
+    txt += '*NETO a Edgar:* ' + gs(cobBruto - costoServ) + '\n';
+  } else {
+    txt += 'Envios sugeridos: ' + gs(totEnvios) + ' (' + ent.length + ' entregas)\n';
+    txt += '*NETO a Edgar:* ' + gs(cobBruto - totEnvios) + '\n';
+  }
+
+  // Bloque STOCK
+  if (sp.length) {
+    var totSalio = 0, totDev = 0, totVendExtra = 0, gsExtra = 0;
+    var detSalio = [], detDev = [], detExtra = [];
+    for (var i = 0; i < sp.length; i++) {
+      var prod = sp[i];
+      var sal = stockAsig[prod] || 0;
+      var eP = ePP[prod] || 0;
+      var ext = ventasExtra[prod] || 0;
+      var dev = Math.max(0, sal - eP - ext);
+      totSalio += sal;
+      totDev += dev;
+      totVendExtra += ext;
+      if (sal > 0) detSalio.push(sal + ' ' + prod);
+      if (dev > 0) detDev.push(dev + ' ' + prod);
+      if (ext > 0) {
+        detExtra.push(ext + ' ' + prod);
+        // Buscar precio del producto en pedidos para calcular gsExtra
+        var precioRef = 0;
+        for (var j = 0; j < mp.length; j++) {
+          if (mp[j].prod === prod) { precioRef = mp[j].precio || 0; break; }
+        }
+        gsExtra += precioRef * ext;
+      }
+    }
+    txt += '\n' + lin + '\n*STOCK DEL DIA*\n' + lin + '\n';
+
+    // Recibido extra: cada producto en su propia fila
+    txt += '*Recibido extra:* ' + totSalio + ' unidades\n';
+    if (detSalio.length) {
+      for (var i = 0; i < detSalio.length; i++) {
+        txt += '  - ' + detSalio[i] + '\n';
+      }
+    }
+    txt += '\n';
+
+    // Devuelto: cada producto en su propia fila
+    txt += '*Devuelto:* ' + totDev + ' unidades\n';
+    if (detDev.length) {
+      for (var i = 0; i < detDev.length; i++) {
+        txt += '  - ' + detDev[i] + '\n';
+      }
+    } else if (totDev === 0) {
+      txt += '  - Sin devoluciones\n';
+    }
+    txt += '\n';
+
+    // Vendido extra (solo si hay ventas extra)
+    if (totVendExtra > 0) {
+      txt += '*Vendido extra:* ' + totVendExtra + ' unidades - ' + gs(gsExtra) + '\n';
+      for (var i = 0; i < detExtra.length; i++) {
+        txt += '  - ' + detExtra[i] + '\n';
+      }
+      txt += '\n';
+    }
+  }
+
+  // Detalle ENTREGADOS
+  if (ent.length) {
+    txt += '\n' + lin + '\n*ENTREGADOS*\n' + lin + '\n';
+    for (var i = 0; i < ent.length; i++) {
+      var p = ent[i];
+      var totP = (p.precio || 0) * (p.cant || 1);
+      var envP = costoCiudad(p.ciudad);
+      txt += (i + 1) + '. ' + p.cliente + ' - ' + p.ciudad + '\n';
+      txt += '   ' + p.prod + ' x' + p.cant + ' - ' + gs(totP) + '\n';
+      txt += '   (envio ' + gs(envP) + ' incluido)\n\n';
+    }
+  }
+
+  // Detalle NO PUDO (antes CANCELADOS) - v31: ahora con teléfono
+  if (noe.length) {
+    txt += lin + '\nNO PUDO (' + noe.length + ')\n' + lin + '\n';
+    for (var i = 0; i < noe.length; i++) {
+      var p = noe[i];
+      var totP = (p.precio || 0) * (p.cant || 1);
+      txt += (i + 1) + '. ' + p.cliente + ' - ' + p.prod + ' - ' + p.ciudad + ' - ' + gs(totP) + '\n';
+      if (p.tel) txt += '   Tel: ' + p.tel + '\n';
+      txt += '   Motivo: ' + (motivos[p.id] || '-') + '\n\n';
+    }
+  }
+
+  // v31: Detalle PENDIENTES (los que no se procesaron al final del día)
+  if (pen.length) {
+    txt += lin + '\nPENDIENTES (' + pen.length + ')\n' + lin + '\n';
+    for (var i = 0; i < pen.length; i++) {
+      var p = pen[i];
+      var totP = (p.precio || 0) * (p.cant || 1);
+      txt += (i + 1) + '. ' + p.cliente + ' - ' + p.prod + ' - ' + p.ciudad + ' - ' + gs(totP) + '\n';
+      if (p.tel) txt += '   Tel: ' + p.tel + '\n';
+      txt += '\n';
+    }
+  }
+
+  return txt;
+}
+
+function enviarReporte() {
+  var txt = generarReporte();
+  if (EDGAR) {
+    window.open('https://wa.me/' + EDGAR + '?text=' + encodeURIComponent(txt));
+  } else {
+    copiarReporte();
+  }
+}
+function copiarReporte() {
+  var txt = generarReporte();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function() { showToast('Reporte copiado'); }).catch(function() { fallbackCopy(txt); });
+  } else {
+    fallbackCopy(txt);
+  }
+}
+function fallbackCopy(txt) {
+  var ta = document.createElement('textarea');
+  ta.value = txt;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); showToast('Reporte copiado'); } catch(e) { showToast('No se pudo copiar'); }
+  document.body.removeChild(ta);
+}
+
+function renderGuia() {
+  var sc = document.getElementById('sc-guia');
+  if (!sc) return;
+
+  var h = '<div style="padding:12px 12px 28px;">';
+
+  // GUIA DE USO
+  h += '<div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:10px;">';
+  h += '<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;border-bottom:2px solid #f0f0f0;padding-bottom:8px;">GUIA DE USO Y TRABAJO</div>';
+  h += '<div style="font-size:14px;font-weight:700;color:#e8400c;margin-bottom:6px;margin-top:4px;">Entregas</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;border-bottom:1px solid #f0f0f0;">1. Manda siempre los mensajes de la app al cliente, asi espera tranquilo.</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;border-bottom:1px solid #f0f0f0;">2. Revisa y actualiza tu stock para el reporte.</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;">3. Envia tu reporte apenas termines.</div>';
+  h += '</div>';
+
+  // SEGURIDAD
+  h += '<div style="background:#1c1c1e;border-radius:14px;padding:18px;margin-bottom:10px;">';
+  h += '<div style="font-size:12px;font-weight:900;color:#f5a623;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">SEGURIDAD</div>';
+  h += '<div style="font-size:14px;color:#fff;padding:6px 0;border-bottom:1px solid #333;">Usa casco siempre</div>';
+  h += '<div style="font-size:14px;color:#fff;padding:6px 0;border-bottom:1px solid #333;">Respeta los semaforos.</div>';
+  h += '<div style="font-size:14px;color:#fff;padding:6px 0;border-bottom:1px solid #333;">No pases cuando no ves que viene detras.</div>';
+  h += '<div style="font-size:14px;color:#fff;padding:6px 0;border-bottom:1px solid #333;">Con lluvia, maneja con mas cuidado</div>';
+  h += '<div style="font-size:12px;color:#888;padding-top:8px;font-style:italic;">Cuidarte vos tambien es parte del trabajo.</div>';
+  h += '</div>';
+
+  // CLIENTE NO ESTA
+  h += '<div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:10px;">';
+  h += '<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">SI EL CLIENTE NO ESTA</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;border-bottom:1px solid #f0f0f0;">1. Llamalo</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;border-bottom:1px solid #f0f0f0;">2. Mandale WhatsApp</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;border-bottom:1px solid #f0f0f0;">3. Pregunta a vecinos</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;border-bottom:1px solid #f0f0f0;">4. Consulta con Edgar si tiene mas informacion</div>';
+  h += '<div style="font-size:12px;color:#888;padding-top:8px;font-style:italic;">Intenta resolver antes de dar por terminado el intento.</div>';
+  h += '</div>';
+
+  // COBRO
+  h += '<div style="background:#fff3e0;border-radius:14px;padding:18px;margin-bottom:10px;">';
+  h += '<div style="font-size:12px;font-weight:900;color:#e8400c;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">COBRO</div>';
+  h += '<div style="font-size:14px;color:#000;padding:6px 0;">Ten siempre vuelto disponible</div>';
+  h += '</div>';
+
+  // TU TRABAJO IMPORTA
+  h += '<div style="background:#f5a623;border-radius:14px;padding:20px;margin-bottom:10px;">';
+  h += '<div style="font-size:12px;font-weight:900;color:#000;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">TU TRABAJO IMPORTA</div>';
+  h += '<div style="font-size:14px;color:#000;line-height:1.7;margin-bottom:10px;">Tu trabajo es importante. Cada entrega bien hecha hace crecer todo esto.</div>';
+  h += '<div style="font-size:14px;color:#000;line-height:1.7;margin-bottom:10px;">Una sonrisa dice mas que muchas palabras.</div>';
+  h += '<div style="font-size:14px;color:#000;line-height:1.7;margin-bottom:10px;">Una buena experiencia hace que 8 de cada 10 clientes vuelvan a darnos su confianza.</div>';
+  h += '<div style="font-size:14px;color:#000;line-height:1.7;margin-bottom:10px;">Hay dias buenos y otros que no tanto... y aun asi estas cumpliendo. Eso cuenta.</div>';
+  h += '<div style="font-size:14px;color:#000;line-height:1.7;">No olvides estar agradecido por un dia mas. Todo funciona mejor asi.</div>';
+  h += '</div>';
+
+  // Botón configurar Google API Key (al final, semi-oculto, no es de uso diario)
+  h += '<div style="background:#fafafa;border-radius:10px;padding:12px;margin-top:6px;border:1px dashed #ddd;">';
+  h += '<div style="font-size:10px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">CONFIGURACIÓN AVANZADA</div>';
+  h += '<button onclick="configurarGoogleApiKey()" style="width:100%;padding:10px;background:#fff;color:#666;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;touch-action:manipulation;">🔑 Configurar Google API Key</button>';
+  h += '<div style="font-size:10px;color:#aaa;margin-top:6px;text-align:center;">Solo si vas a usar el botón de Optimizar (Google).</div>';
+  h += '</div>';
+
+  // v31: Botón Cerrar Sesión con doble confirmación
+  h += '<div style="background:#fff5f0;border-radius:10px;padding:14px;margin-top:14px;border:2px solid #ffcfb3;">';
+  h += '<div style="font-size:11px;color:#c33;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center;">🚪 SESIÓN</div>';
+  h += '<button onclick="confirmarCerrarSesion1()" style="width:100%;padding:14px;background:#c33;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation;">CERRAR SESIÓN</button>';
+  h += '<div style="font-size:11px;color:#888;margin-top:8px;text-align:center;">Cerrar tu sesión termina tu jornada.</div>';
+  h += '</div>';
+
+  h += '</div>';
+  sc.innerHTML = h;
+}
+
+// v31: Cerrar sesión con doble confirmación
+function confirmarCerrarSesion1() {
+  if (!confirm('🛑 CERRAR SESIÓN\n\nAtención: si cerrás sesión, dejás de recibir actualizaciones de pedidos.\n\n¿Realmente querés cerrar?')) return;
+  confirmarCerrarSesion2();
+}
+
+function confirmarCerrarSesion2() {
+  var ahora = new Date();
+  var hhmm = String(ahora.getHours()).padStart(2,'0') + ':' + String(ahora.getMinutes()).padStart(2,'0');
+  if (!confirm('⚠️ ÚLTIMA CONFIRMACIÓN\n\n¿Confirmás que querés cerrar sesión?')) return;
+  // Mandar evento al backend con GPS (silencioso, sin mostrar al delivery)
+  __sendEventoGPS('cierre_sesion', {hora: hhmm});
+  // Detener tracking
+  __detenerTracking();
+  // Limpiar estado local del delivery
+  rider = null;
+  estados = {};
+  motivos = {};
+  costoServ = 0;
+  ventasExtra = {};
+  // Volver a login
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  // Limpiar selects
+  var lN = document.getElementById('lNombre');
+  if (lN) lN.value = '';
+  var lP = document.getElementById('lPin');
+  if (lP) lP.value = '';
+  showToast('Sesión cerrada');
+}
+
+initLogin();
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// v41 — FEATURES TEMPLATE RIDER
+// ════════════════════════════════════════════════════════════════════════════
+
+// SALIDA actual (1/2/3) elegida por el rider
+var SALIDA_ACTUAL_V41 = parseInt(lsR('mip_d_salida_' + HOY) || '0', 10);
+
+// STOCK_EXTRA inyectado por el centro (lista de items del bolso del rider)
+var STOCK_EXTRA_V41 = (function(){
+  try {
+    if (typeof STOCK_EXTRA_ASIG === 'undefined' || !STOCK_EXTRA_ASIG) return [];
+    if (!rider || !rider.id) return [];
+    var prods = STOCK_EXTRA_ASIG[rider.id];
+    if (!prods) return [];
+    var arr = [];
+    Object.keys(prods).forEach(function(prod){
+      var cant = prods[prod];
+      if (cant > 0) arr.push({ producto: prod, cantidad: cant });
+    });
+    return arr;
+  } catch(e){ return []; }
+})();
+
+// ── Mostrar pantalla SALIDA 1/2/3 ──
+function mostrarPantallaSalidaV41() {
+  try {
+    var pantalla = document.getElementById('pantallaSalidaV41');
+    if (pantalla) pantalla.remove();
+    
+    pantalla = document.createElement('div');
+    pantalla.id = 'pantallaSalidaV41';
+    pantalla.style.cssText = 'position:fixed;inset:0;z-index:120;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;max-width:430px;margin:0 auto;';
+    
+    // Contar pedidos por salida (solo del rider actual)
+    var todosDelRider = PEDIDOS.filter(function(p){
+      return rider && rider.id && (!p.rider || p.rider === rider.id);
+    });
+    var s1 = todosDelRider.filter(function(p){ return p.salida == '1'; }).length;
+    var s2 = todosDelRider.filter(function(p){ return p.salida == '2'; }).length;
+    var s3 = todosDelRider.filter(function(p){ return p.salida == '3'; }).length;
+    var sinS = todosDelRider.filter(function(p){ return !p.salida; }).length;
+    
+    var nombre = rider ? rider.nombre : '';
+    
+    var html = '<div style="font-size:14px;color:#999;margin-bottom:6px;">Hola</div>';
+    html += '<div style="font-size:28px;font-weight:900;color:#e8400c;margin-bottom:6px;">' + nombre + '</div>';
+    html += '<div style="font-size:14px;color:#777;margin-bottom:24px;">¿Qué turno arrancás?</div>';
+    
+    function btn(num, count, label) {
+      var color = num === 1 ? '#1565c0' : num === 2 ? '#7b3eb8' : '#1b7b2f';
+      var emoji = num === 1 ? '🌅' : num === 2 ? '☀️' : '🌆';
+      return '<button onclick="elegirSalidaV41(' + num + ')" style="width:100%;background:' + color + ';color:#fff;border:none;padding:22px 18px;border-radius:14px;font-weight:900;font-size:18px;cursor:pointer;font-family:inherit;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;touch-action:manipulation;box-shadow:0 3px 8px rgba(0,0,0,0.15);"><div style="display:flex;align-items:center;gap:12px;"><span style="font-size:28px;">' + emoji + '</span><span>' + label + '</span></div><span style="background:rgba(255,255,255,0.25);padding:6px 14px;border-radius:20px;font-size:15px;">' + count + (count === 1 ? ' pedido' : ' pedidos') + '</span></button>';
+    }
+    
+    html += btn(1, s1, 'SALIDA 1');
+    html += btn(2, s2, 'SALIDA 2');
+    html += btn(3, s3, 'SALIDA 3');
+    
+    if (sinS > 0 || (s1 + s2 + s3 === 0)) {
+      html += '<button onclick="elegirSalidaV41(0)" style="width:100%;background:#f5a623;color:#000;border:none;padding:18px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;margin-top:8px;touch-action:manipulation;">📦 VER TODOS (' + todosDelRider.length + ')</button>';
+    }
+    
+    pantalla.innerHTML = html;
+    document.body.appendChild(pantalla);
+    var app = document.querySelector('.app');
+    if (app) app.style.display = 'none';
+  } catch(e){ console.warn('[v41 salida]', e); }
+}
+
+function elegirSalidaV41(num) {
+  try {
+    SALIDA_ACTUAL_V41 = num;
+    lsW('mip_d_salida_' + HOY, String(num));
+    var pant = document.getElementById('pantallaSalidaV41');
+    if (pant) pant.remove();
+    var app = document.querySelector('.app');
+    if (app) app.style.display = 'flex';
+    renderEntregas();
+    if (typeof renderResumen === 'function') renderResumen();
+  } catch(e){ console.warn('[v41 elegir salida]', e); }
+}
+
+// Cambiar salida (botón header)
+function cambiarSalidaV41() {
+  SALIDA_ACTUAL_V41 = 0;
+  lsW('mip_d_salida_' + HOY, '0');
+  mostrarPantallaSalidaV41();
+}
+
+// Hook a mis() para filtrar por salida
+var _origMisV41 = mis;
+mis = function() {
+  var r = _origMisV41();
+  if (!SALIDA_ACTUAL_V41 || SALIDA_ACTUAL_V41 === 0) return r;
+  return r.filter(function(p){ return p.salida == SALIDA_ACTUAL_V41; });
+};
+
+// Hook a doLogin para mostrar pantalla salida después
+var _origDoLoginV41 = doLogin;
+doLogin = function() {
+  var r = _origDoLoginV41.apply(this, arguments);
+  setTimeout(function(){
+    if (rider && rider.id && !SALIDA_ACTUAL_V41) {
+      mostrarPantallaSalidaV41();
+    }
+  }, 250);
+  return r;
+};
+
+// ── CANCELADO con campo de texto LIBRE ──
+function abrirCanceladoV41(id) {
+  try {
+    var existing = document.getElementById('modalCanceladoV41');
+    if (existing) existing.remove();
+    
+    var p = PEDIDOS.find(function(x){ return x.id === id; });
+    if (!p) return;
+    
+    var overlay = document.createElement('div');
+    overlay.id = 'modalCanceladoV41';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;';
+    
+    overlay.innerHTML = 
+      '<div style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:430px;padding:20px;max-height:85vh;overflow-y:auto;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">' +
+          '<div style="font-size:18px;font-weight:900;color:#c52424;">❌ CANCELAR ENTREGA</div>' +
+          '<button onclick="document.getElementById(\'modalCanceladoV41\').remove()" style="background:none;border:none;font-size:24px;color:#999;cursor:pointer;">✕</button>' +
+        '</div>' +
+        '<div style="background:#f5f5f5;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#333;line-height:1.5;">' +
+          '<b>' + (p.cliente || '') + '</b><br>' +
+          '<span style="font-family:monospace;color:#666;">' + (p.tel || '') + '</span><br>' +
+          (p.ciudad || '') +
+        '</div>' +
+        '<label style="display:block;font-size:12px;font-weight:800;color:#444;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">MOTIVO (escribí lo que pasó)</label>' +
+        '<textarea id="motivoCanceladoV41" placeholder="Ej: reagendar para mañana / no estaba, le esperé 20 min / quiere mañana de tarde / no contesta / etc" style="width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-size:15px;font-family:inherit;min-height:120px;resize:vertical;outline:none;color:#000;"></textarea>' +
+        '<div style="background:#fff8e1;border:1px solid #ffd966;border-radius:8px;padding:10px;margin:12px 0;font-size:12px;color:#7b5b00;line-height:1.4;">' +
+          '💡 Escribí libremente. Esto se envía al WhatsApp del jefe y se guarda.' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:14px;">' +
+          '<button onclick="document.getElementById(\'modalCanceladoV41\').remove()" style="background:#f0f0f0;color:#666;border:none;padding:16px;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;touch-action:manipulation;">Atrás</button>' +
+          '<button onclick="confirmarCanceladoV41(\'' + id + '\')" style="background:#c52424;color:#fff;border:none;padding:16px;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;touch-action:manipulation;">CONFIRMAR CANCELACIÓN</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    setTimeout(function(){
+      var ta = document.getElementById('motivoCanceladoV41');
+      if (ta) ta.focus();
+    }, 200);
+  } catch(e){ console.warn('[v41 cancelado]', e); }
+}
+
+function confirmarCanceladoV41(id) {
+  try {
+    var ta = document.getElementById('motivoCanceladoV41');
+    var motivo = (ta && ta.value || '').trim();
+    if (!motivo) { alert('⚠️ Escribí el motivo antes de cancelar'); return; }
+    
+    var p = PEDIDOS.find(function(x){ return x.id === id; });
+    
+    // Guardar motivo
+    var motivos_data = JSON.parse(lsR('mip_d_motivos_' + HOY) || '{}');
+    motivos_data[id] = motivo;
+    lsW('mip_d_motivos_' + HOY, JSON.stringify(motivos_data));
+    if (typeof motivos !== 'undefined') motivos[id] = motivo;
+    
+    // Marcar estado no_entregado
+    estados[id] = 'no_entregado';
+    lsW('mip_d_estados_' + HOY, JSON.stringify(estados));
+    
+    var horaEvento = new Date().toISOString();
+    
+    // Registrar evento local
+    try {
+      var eventos = JSON.parse(lsR('mip_d_eventos_' + HOY) || '[]');
+      eventos.push({
+        tipo: 'no_entregado',
+        pedidoId: id,
+        motivo: motivo,
+        ts: horaEvento,
+        lat: (typeof MI_LAT !== 'undefined') ? MI_LAT : null,
+        lng: (typeof MI_LNG !== 'undefined') ? MI_LNG : null
+      });
+      lsW('mip_d_eventos_' + HOY, JSON.stringify(eventos));
+    } catch(e){}
+    
+    // Mandar evento al worker
+    try {
+      fetch('https://tracking-delivery.edgardavidca89.workers.dev/evento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tipo: 'no_entregado',
+          riderId: rider ? rider.id : '',
+          riderNombre: rider ? rider.nombre : '',
+          pedidoId: id,
+          cliente: p ? p.cliente : '',
+          ciudad: p ? p.ciudad : '',
+          producto: p ? p.prod : '',
+          cantidad: p ? p.cant : 0,
+          precio: p ? p.precio : 0,
+          motivo: motivo,
+          lat: (typeof MI_LAT !== 'undefined') ? MI_LAT : null,
+          lng: (typeof MI_LNG !== 'undefined') ? MI_LNG : null,
+          ts: horaEvento
+        })
+      }).catch(function(){});
+    } catch(e){}
+    
+    // WhatsApp al jefe (no al cliente)
+    try {
+      var jefeTel = (typeof EDGAR !== 'undefined' && EDGAR) ? (EDGAR.tel || EDGAR.telefono || '') : '';
+      if (jefeTel && p) {
+        var h = new Date().toLocaleTimeString('es-PY', {hour:'2-digit',minute:'2-digit'});
+        var msg = '❌ CANCELADO\n' + (p.prod||'') + '\n' + (p.cliente||'') + ' - ' + (p.tel||'') + '\n' + (p.ciudad||'') + '\nMotivo: ' + motivo + '\n' + h + ' - ' + (rider ? rider.nombre : 'Delivery');
+        var wa = 'https://wa.me/' + jefeTel.replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg);
+        window.open(wa, '_blank');
+      }
+    } catch(e){}
+    
+    document.getElementById('modalCanceladoV41').remove();
+    renderEntregas();
+    if (typeof renderResumen === 'function') renderResumen();
+  } catch(e){ console.warn('[v41 confirmar cancelado]', e); alert('Error: ' + e.message); }
+}
+
+// ── Tab RESUMEN: por ciudad + stock extra ──
+function renderResumenPorCiudadV41() {
+  try {
+    var todos = mis();
+    if (!todos.length) return '';
+    
+    var porCiudad = {};
+    var totalGeneral = 0;
+    todos.forEach(function(p){
+      var ciudad = p.ciudad || '—';
+      var tarifa = (typeof TARIFAS_RIDER !== 'undefined' && TARIFAS_RIDER && TARIFAS_RIDER[ciudad]) || (typeof COSTOS_CIUDAD !== 'undefined' && COSTOS_CIUDAD && COSTOS_CIUDAD[ciudad]) || 0;
+      if (!porCiudad[ciudad]) porCiudad[ciudad] = { count: 0, total: 0, tarifa: tarifa };
+      porCiudad[ciudad].count++;
+      porCiudad[ciudad].total += tarifa;
+      totalGeneral += tarifa;
+    });
+    var ciudades = Object.keys(porCiudad).sort(function(a,b){ return porCiudad[b].total - porCiudad[a].total; });
+    
+    var html = '<div style="background:#fff;border-radius:14px;padding:14px;margin:10px;border:1px solid #e0e0e0;box-shadow:0 1px 3px rgba(0,0,0,.07);">';
+    html += '<div style="font-size:11px;color:#999;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">💰 LO QUE VAS A COBRAR POR ENVÍO</div>';
+    ciudades.forEach(function(ciu){
+      var d = porCiudad[ciu];
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;">';
+      html += '<div><div style="font-weight:800;font-size:14px;color:#1a1a1a;">' + ciu + '</div>';
+      html += '<div style="font-size:11px;color:#888;">' + d.count + (d.count === 1 ? ' envío' : ' envíos') + ' × Gs ' + d.tarifa.toLocaleString('es-PY') + '</div></div>';
+      html += '<div style="font-weight:900;font-size:16px;color:#e8400c;font-family:monospace;">Gs ' + d.total.toLocaleString('es-PY') + '</div>';
+      html += '</div>';
+    });
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;margin-top:8px;border-top:2px solid #e8400c;">';
+    html += '<div style="font-weight:900;font-size:15px;color:#1a1a1a;">TOTAL</div>';
+    html += '<div style="font-weight:900;font-size:22px;color:#e8400c;font-family:monospace;">Gs ' + totalGeneral.toLocaleString('es-PY') + '</div>';
+    html += '</div>';
+    html += '</div>';
+    return html;
+  } catch(e){ return ''; }
+}
+
+// Bloque STOCK EXTRA visible al delivery
+function renderStockExtraV41() {
+  if (!STOCK_EXTRA_V41 || !STOCK_EXTRA_V41.length) return '';
+  var html = '<div style="background:#fff;border-radius:14px;padding:14px;margin:10px;border:1.5px solid #3b82f6;box-shadow:0 1px 3px rgba(0,0,0,.07);">';
+  html += '<div style="font-size:11px;color:#3b82f6;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">📦 STOCK EXTRA QUE LLEVÁS</div>';
+  STOCK_EXTRA_V41.forEach(function(e){
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;">';
+    html += '<div style="font-size:14px;color:#1a1a1a;font-weight:700;">📦 ' + (e.producto||'') + (e.variante ? ' ' + e.variante : '') + '</div>';
+    html += '<div style="font-size:16px;font-weight:900;color:#3b82f6;">x' + (e.cantidad||1) + '</div>';
+    html += '</div>';
+  });
+  html += '<div style="font-size:11px;color:#777;margin-top:8px;line-height:1.4;">Lo que tenés extra en la mochila para vender. Avisá si vendés alguno.</div>';
+  html += '</div>';
+  return html;
+}
+
+// Hook a renderResumen para meter resumen ciudad + stock extra
+var _origRR_V41 = (typeof renderResumen === 'function') ? renderResumen : null;
+window.renderResumen = function() {
+  if (_origRR_V41) try { _origRR_V41.apply(this, arguments); } catch(e){}
+  try {
+    var sc = document.getElementById('sc-resumen');
+    if (!sc) return;
+    // Quitar viejos
+    ['resumenCiudadV41Block','stockExtraV41Block'].forEach(function(id){
+      var prev = document.getElementById(id);
+      if (prev) prev.remove();
+    });
+    // Agregar Stock Extra ARRIBA si hay
+    var stockBlock = document.createElement('div');
+    stockBlock.id = 'stockExtraV41Block';
+    stockBlock.innerHTML = renderStockExtraV41();
+    if (stockBlock.innerHTML) sc.insertBefore(stockBlock, sc.firstChild);
+    // Resumen por ciudad
+    var cBlock = document.createElement('div');
+    cBlock.id = 'resumenCiudadV41Block';
+    cBlock.innerHTML = renderResumenPorCiudadV41();
+    sc.insertBefore(cBlock, sc.children[1] || sc.firstChild);
+  } catch(e){ console.warn('[v41 renderResumen hook]', e); }
+};
+
+// Hook para mostrar motivo guardado en card
+function getMotivoGuardadoV41(id) {
+  try {
+    var motivos_data = JSON.parse(lsR('mip_d_motivos_' + HOY) || '{}');
+    return motivos_data[id] || '';
+  } catch(e) { return ''; }
+}
+
+// Auto-mostrar pantalla salida al arrancar (si rider ya logueado pero sin salida)
+setTimeout(function(){
+  try {
+    if (rider && rider.id && !SALIDA_ACTUAL_V41) {
+      var ls = document.getElementById('loginScreen');
+      if (ls && ls.style.display === 'none') {
+        mostrarPantallaSalidaV41();
+      }
+    }
+  } catch(e){}
+}, 800);
+
+console.log('[v41 template] OK');
+
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// v42 — Botón VOLVER ATRÁS en pantalla salida (Opción A + B)
+// ════════════════════════════════════════════════════════════════════════════
+(function() {
+  if (typeof renderEntregas !== 'function') return;
+  var _orig = renderEntregas;
+  renderEntregas = function() {
+    var r = _orig.apply(this, arguments);
+    try {
+      // Si hay salida activa, meter botón VOLVER al inicio de sc-entregas
+      if (typeof SALIDA_ACTUAL_V41 !== 'undefined' && SALIDA_ACTUAL_V41 > 0) {
+        var sc = document.getElementById('sc-entregas');
+        if (!sc) return r;
+        // Quitar anterior si lo tenía
+        var prev = document.getElementById('v42BotonVolver');
+        if (prev) prev.remove();
+        // Crear botón
+        var bar = document.createElement('div');
+        bar.id = 'v42BotonVolver';
+        bar.style.cssText = 'padding:10px 14px;background:linear-gradient(135deg,#fff5e6,#fff8d6);border-bottom:1.5px solid #f5c000;display:flex;justify-content:space-between;align-items:center;margin:0 10px 10px;border-radius:10px;';
+        bar.innerHTML = 
+          '<button onclick="cambiarSalidaV41()" style="background:#fff;border:1.5px solid #ddd;color:#333;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px;touch-action:manipulation;">← Cambiar salida</button>' +
+          '<div style="font-weight:900;color:#7a5a00;font-size:14px;letter-spacing:1px;">🚦 SALIDA ' + SALIDA_ACTUAL_V41 + '</div>';
+        sc.insertBefore(bar, sc.firstChild);
+      }
+    } catch(e){ console.warn('[v42 btn volver]', e); }
+    return r;
+  };
+})();
+
+
+
+// ════════════════════════════════════════════════════════════════
+// v51 DELIVERY — Conexión bidireccional + GPS foreground + mensajes config
+// ════════════════════════════════════════════════════════════════
+(function(){
+'use strict';
+var ESTADOS_BACKEND = (typeof TRACKING_BACKEND !== 'undefined' && TRACKING_BACKEND) ? TRACKING_BACKEND : '';
+
+// ── 1) Reportar estado de pedido al Worker (/estados) ──
+function v51ReportarEstado(pedidoId, estado, extra){
+  if (!ESTADOS_BACKEND) return;
+  extra = extra || {};
+  var payload = {
+    pedidoId: pedidoId,
+    estado: estado,
+    riderId: (typeof rider !== 'undefined' && rider) ? rider.id : '',
+    nombreCliente: extra.cliente || '',
+    monto: extra.monto || 0,
+    motivo: extra.motivo || '',
+    lat: (typeof MI_LAT !== 'undefined') ? MI_LAT : null,
+    lng: (typeof MI_LNG !== 'undefined') ? MI_LNG : null
+  };
+  try {
+    fetch(ESTADOS_BACKEND.replace(/\/+$/,'') + '/estados', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+      keepalive: true
+    }).catch(function(){});
+  } catch(e){}
+}
+
+// Hook a entregado()
+if (typeof window.entregado === 'function' && !window.entregado._v51){
+  var _origEntregado = window.entregado;
+  window.entregado = function(id){
+    var r = _origEntregado.apply(this, arguments);
+    try {
+      var p = null, mp = mis();
+      for (var i=0;i<mp.length;i++){ if(mp[i].id===id){ p=mp[i]; break; } }
+      v51ReportarEstado(id, 'entregado', p ? { cliente:p.cliente, monto:(p.precio||0)*(p.cant||1) } : {});
+    } catch(e){}
+    return r;
+  };
+  window.entregado._v51 = true;
+}
+
+// Hook a confirmarCanceladoV41()
+if (typeof window.confirmarCanceladoV41 === 'function' && !window.confirmarCanceladoV41._v51){
+  var _origCancel = window.confirmarCanceladoV41;
+  window.confirmarCanceladoV41 = function(id){
+    var ta = document.getElementById('motivoCanceladoV41');
+    var motivo = (ta && ta.value || '').trim();
+    var r = _origCancel.apply(this, arguments);
+    try { v51ReportarEstado(id, 'no_entregado', { motivo: motivo }); } catch(e){}
+    return r;
+  };
+  window.confirmarCanceladoV41._v51 = true;
+}
+
+// ── 2) GPS al volver a primer plano (foreground) ──
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible'){
+    if (typeof __sendGPSPeriodico === 'function'){
+      try { __sendGPSPeriodico(); } catch(e){}
+    }
+    // Refrescar MI_LAT/MI_LNG silenciosamente
+    if (navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(pos){
+        try { MI_LAT = pos.coords.latitude; MI_LNG = pos.coords.longitude; } catch(e){}
+      }, function(){}, { enableHighAccuracy:false, timeout:8000, maximumAge:30000 });
+    }
+  }
+});
+
+// ── 3) Tres mensajes configurables por Edgar (inyectados como []) ──
+// MSG_CONFIG = [{label, texto}, ...]  — texto admite {cliente} {producto} {total} {rider}
+var MSG_CONFIG = (typeof [] !== 'undefined' && [] && [].length)
+  ? []
+  : [
+      { label:'Saliendo', texto:'Hola {cliente}! Soy {rider} de Mundo Importados. Ya salí con tu pedido {producto}. Llego en 1 a 2 horas. Total: {total} (efectivo o transferencia).' },
+      { label:'Estoy cerca', texto:'Hola {cliente}! Estoy a pocos minutos de tu ubicación con tu {producto}. Total a abonar: {total}. Te llamo al llegar.' },
+      { label:'Llegué', texto:'Hola {cliente}! Llegué a tu ubicación con el pedido. Salgo a tu encuentro. Total: {total}.' }
+    ];
+
+function v51Plantilla(txt, p){
+  var total = (p.precio||0)*(p.cant||1);
+  var nombreRider = (typeof rider!=='undefined' && rider) ? rider.nombre : '';
+  return (txt||'')
+    .split('{cliente}').join(p.cliente||'')
+    .split('{producto}').join(p.prod||'')
+    .split('{total}').join(typeof gs==='function'?gs(total):total)
+    .split('{rider}').join(nombreRider)
+    .split('{ciudad}').join(p.ciudad||'');
+}
+
+window.v51EnviarMsgConfig = function(idx, pedidoId){
+  var p = null, mp = mis();
+  for (var i=0;i<mp.length;i++){ if(mp[i].id===pedidoId){ p=mp[i]; break; } }
+  if(!p && typeof PEDIDOS!=='undefined'){ for(var j=0;j<PEDIDOS.length;j++){ if(PEDIDOS[j].id===pedidoId){ p=PEDIDOS[j]; break; } } }
+  if(!p) return;
+  var cfg = MSG_CONFIG[idx];
+  if (!cfg) return;
+  var msg = v51Plantilla(cfg.texto, p);
+  var tel = typeof waNum==='function' ? waNum(p.tel) : (p.tel||'');
+  window.open('https://wa.me/' + tel + '?text=' + encodeURIComponent(msg), '_blank');
+};
+
+// Inyectar la fila de 3 botones configurables en cada card de entregas (post-render)
+function v51InyectarBotonesMsg(){
+  var cards = document.querySelectorAll('#sc-entregas .card[data-pid]');
+  var mp = mis();
+  cards.forEach(function(card){
+    if (card.querySelector('.v51-msgrow')) return;
+    var pid = card.getAttribute('data-pid');
+    var idx = -1;
+    for (var i=0;i<mp.length;i++){ if(mp[i].id===pid){ idx=i; break; } }
+    if (idx<0) return;
+    var st = (typeof estados!=='undefined' && estados[pid]) || 'pendiente';
+    if (st !== 'pendiente') return; // solo pendientes
+    var row = document.createElement('div');
+    row.className = 'v51-msgrow';
+    row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 14px 14px;';
+    var colors = ['#e8400c','#1565c0','#1b7b2f'];
+    var html = '';
+    MSG_CONFIG.slice(0,3).forEach(function(m, k){
+      html += '<button onclick="v51EnviarMsgConfig('+k+',\''+pid+'\')" style="background:'+colors[k]+';color:#fff;border:none;padding:11px 4px;border-radius:9px;font-weight:800;font-size:11px;cursor:pointer;font-family:inherit;touch-action:manipulation;">📲 '+(m.label||('Msg '+(k+1)))+'</button>';
+    });
+    row.innerHTML = html;
+    var cb = card.querySelector('.cb');
+    if (cb) cb.appendChild(row); else card.appendChild(row);
+  });
+}
+
+// Hook a renderEntregas para inyectar los botones
+if (typeof window.renderEntregas === 'function' && !window.renderEntregas._v51msg){
+  var _origRE = window.renderEntregas;
+  window.renderEntregas = function(){
+    var r = _origRE.apply(this, arguments);
+    try { setTimeout(v51InyectarBotonesMsg, 50); } catch(e){}
+    return r;
+  };
+  window.renderEntregas._v51msg = true;
+}
+
+console.log('[v51 delivery] OK — estados bidireccional + GPS foreground + msgs config');
+})();
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// v52 — SALIDAS COMO PESTAÑAS PERSISTENTES (TODOS / S1 / S2 / S3)
+// Reemplaza la pantalla bloqueante por una barra siempre visible.
+// Volver atrás siempre disponible. Vista TODOS cruzada con sello de salida.
+// Reporte refleja la pestaña activa + control por resta en TOTAL.
+// ══════════════════════════════════════════════════════════════════════════
+(function(){
+'use strict';
+
+// 1) Desactivar la pantalla bloqueante de selección de salida (v41).
+//    Arrancamos siempre en TODOS y dejamos que el rider cambie con pestañas.
+try {
+  window.mostrarPantallaSalidaV41 = function(){
+    var p = document.getElementById('pantallaSalidaV41');
+    if (p) p.remove();
+    var app = document.querySelector('.app');
+    if (app) app.style.display = 'flex';
+  };
+} catch(e){}
+
+// Helper: total de un pedido
+function v52Total(p){ return (p.precio||0) * (p.cant||1); }
+
+// Helper: pedidos del rider logueado (sin filtro de salida)
+function v52TodosDelRider(){
+  if (typeof PEDIDOS === 'undefined') return [];
+  return PEDIDOS.filter(function(p){
+    return (typeof rider!=='undefined' && rider && rider.id) ? (!p.rider || p.rider===rider.id) : true;
+  });
+}
+
+// Helper: estado de un pedido
+function v52Estado(id){
+  return (typeof estados!=='undefined' && estados[id]) ? estados[id] : 'pendiente';
+}
+
+// Cambiar de pestaña de salida
+window.v52IrASalida = function(num){
+  try {
+    window.SALIDA_ACTUAL_V41 = num;
+    if (typeof lsW==='function') lsW('mip_d_salida_'+HOY, String(num));
+    if (typeof renderEntregas==='function') renderEntregas();
+  } catch(e){ console.warn('[v52 irASalida]', e); }
+};
+
+// Construir la barra de pestañas
+function v52BarraPestanas(){
+  var todos = v52TodosDelRider();
+  var c = {1:0,2:0,3:0};
+  todos.forEach(function(p){
+    var s = parseInt(p.salida||0,10);
+    if (s===1||s===2||s===3) c[s]++;
+  });
+  var act = parseInt(window.SALIDA_ACTUAL_V41||0,10);
+  var tabs = [
+    {n:0, lbl:'TODOS', cnt:todos.length, col:'#1a1a1a'},
+    {n:1, lbl:'S1',    cnt:c[1],         col:'#1565c0'},
+    {n:2, lbl:'S2',    cnt:c[2],         col:'#7b3eb8'},
+    {n:3, lbl:'S3',    cnt:c[3],         col:'#1b7b2f'}
+  ];
+  var html = '<div id="v52BarraSalidas" style="display:flex;gap:6px;padding:10px 10px 4px;background:#fff;position:sticky;top:0;z-index:20;border-bottom:1px solid #eee;">';
+  tabs.forEach(function(t){
+    var on = (act===t.n);
+    html += '<button onclick="v52IrASalida('+t.n+')" style="flex:1;padding:10px 4px;border:none;border-radius:10px;font-weight:900;font-size:13px;cursor:pointer;font-family:inherit;touch-action:manipulation;'
+      + (on
+          ? 'background:'+t.col+';color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);'
+          : 'background:#f2f2f2;color:#888;')
+      + '">'+t.lbl
+      + '<div style="font-size:10px;font-weight:700;margin-top:2px;opacity:'+(on?'.9':'.7')+';">'+t.cnt+'</div>'
+      + '</button>';
+  });
+  html += '</div>';
+
+  // Si estamos en una salida concreta, botón de cerrar y rendir esa salida
+  if (act===1||act===2||act===3){
+    html += '<div style="padding:0 10px 8px;background:#fff;">'
+      + '<button onclick="v52CerrarYRendir('+act+')" style="width:100%;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,#e8400c,#d63808);color:#fff;font-weight:900;font-size:13px;cursor:pointer;font-family:inherit;touch-action:manipulation;">✓ Cerrar y rendir Salida '+act+'</button>'
+      + '</div>';
+  }
+  return html;
+}
+
+// Cerrar y rendir: lleva a Resumen (que ya calcula cobrado/neto de la salida activa)
+window.v52CerrarYRendir = function(num){
+  try {
+    var scs = document.querySelectorAll('.sc');
+    for (var i=0;i<scs.length;i++) scs[i].classList.remove('on');
+    var tabs = document.querySelectorAll('.tab');
+    for (var j=0;j<tabs.length;j++) tabs[j].classList.remove('on');
+    var rs = document.getElementById('sc-resumen');
+    if (rs) rs.classList.add('on');
+    // marcar visualmente la tab Resumen
+    for (var k=0;k<tabs.length;k++){ if ((tabs[k].textContent||'').indexOf('Resumen')>-1) tabs[k].classList.add('on'); }
+    var hdrT = document.getElementById('hdrT'); if (hdrT) hdrT.textContent = 'Rendir Salida '+num;
+    if (typeof renderResumen==='function') renderResumen();
+    if (typeof showToast==='function') showToast('Rindiendo Salida '+num);
+  } catch(e){ console.warn('[v52 cerrarYRendir]', e); }
+};
+
+// Inyectar la barra + sellos en vista TODOS, tras cada renderEntregas
+function v52PostRender(){
+  try {
+    var sc = document.getElementById('sc-entregas');
+    if (!sc) return;
+    // Quitar barra v42 vieja (botón volver) si existe — la reemplazamos
+    var viejo = document.getElementById('v42BotonVolver');
+    if (viejo) viejo.remove();
+    // Quitar barra previa nuestra
+    var prevWrap = document.getElementById('v52WrapBarra');
+    if (prevWrap) prevWrap.remove();
+    // Insertar barra al inicio
+    var wrap = document.createElement('div');
+    wrap.id = 'v52WrapBarra';
+    wrap.innerHTML = v52BarraPestanas();
+    sc.insertBefore(wrap, sc.firstChild);
+
+    // En vista TODOS: sello de salida + estado cruzado por tarjeta
+    var act = parseInt(window.SALIDA_ACTUAL_V41||0,10);
+    if (act===0){
+      var byId = {};
+      v52TodosDelRider().forEach(function(p){ byId[p.id]=p; });
+      var cards = sc.querySelectorAll('.card[data-pid]');
+      cards.forEach(function(card){
+        if (card.querySelector('.v52-sello')) return;
+        var pid = card.getAttribute('data-pid');
+        var p = byId[pid];
+        if (!p) return;
+        var s = parseInt(p.salida||0,10);
+        var st = v52Estado(pid);
+        var salTxt = (s===1||s===2||s===3) ? ('S'+s) : 'sin salida';
+        var salCol = s===1?'#1565c0':s===2?'#7b3eb8':s===3?'#1b7b2f':'#999';
+        var estTxt = st==='entregado'?'✓ entregado':st==='no_entregado'?'✗ cancelado':st==='reagendado'?'↻ reagendado':'● pendiente';
+        var estCol = st==='entregado'?'#1b7b2f':st==='no_entregado'?'#c52424':st==='reagendado'?'#b06b00':'#e8400c';
+        var sello = document.createElement('div');
+        sello.className = 'v52-sello';
+        sello.style.cssText = 'display:flex;gap:8px;align-items:center;padding:6px 12px;background:#fafafa;border-bottom:1px solid #f0f0f0;';
+        sello.innerHTML =
+          '<span style="background:'+salCol+';color:#fff;font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px;letter-spacing:.5px;">'+salTxt+'</span>'
+          + '<span style="font-size:11px;font-weight:800;color:'+estCol+';">'+estTxt+'</span>';
+        card.insertBefore(sello, card.firstChild);
+      });
+    }
+  } catch(e){ console.warn('[v52 postRender]', e); }
+}
+
+// Hook a renderEntregas
+if (typeof window.renderEntregas==='function' && !window.renderEntregas._v52){
+  var _origRE_v52 = window.renderEntregas;
+  window.renderEntregas = function(){
+    var r = _origRE_v52.apply(this, arguments);
+    try { setTimeout(v52PostRender, 0); } catch(e){}
+    return r;
+  };
+  window.renderEntregas._v52 = true;
+}
+
+// 3) Reporte: control por resta cuando estamos en TODOS
+if (typeof window.generarReporte==='function' && !window.generarReporte._v52){
+  var _origGR_v52 = window.generarReporte;
+  window.generarReporte = function(){
+    var txt = _origGR_v52.apply(this, arguments);
+    try {
+      var act = parseInt(window.SALIDA_ACTUAL_V41||0,10);
+      var lin = '--------------------';
+      var g = (typeof gs==='function') ? gs : function(n){ return 'Gs '+(n||0).toLocaleString('es-PY'); };
+      if (act===0){
+        // CONTROL TOTAL sobre todos los pedidos del rider
+        var todos = v52TodosDelRider();
+        var salio=0, cobrado=0, envios=0, pend=0, canc=0;
+        todos.forEach(function(p){
+          var t = v52Total(p);
+          salio += t;
+          var st = v52Estado(p.id);
+          if (st==='entregado'){ cobrado += t; envios += (typeof costoCiudad==='function'?costoCiudad(p.ciudad):0); }
+          else if (st==='no_entregado'){ canc += t; }
+          else { pend += t; }
+        });
+        var pagoDel = (typeof costoServ!=='undefined' && costoServ>0) ? costoServ : envios;
+        var neto = cobrado - pagoDel;
+        txt += '\n'+lin+'\n*CONTROL TOTAL (las 3 salidas)*\n'+lin+'\n';
+        txt += 'Salió a la calle: ' + g(salio) + '\n';
+        txt += 'Cobrado (entregado): ' + g(cobrado) + '\n';
+        if (canc>0) txt += 'No entregado: ' + g(canc) + '\n';
+        if (pend>0) txt += 'Pendiente (no procesado): ' + g(pend) + '\n';
+        txt += '\n*NETO A EDGAR: ' + g(neto) + '*\n';
+      } else {
+        txt = '*SALIDA ' + act + '*\n' + txt;
+      }
+    } catch(e){ console.warn('[v52 reporte]', e); }
+    return txt;
+  };
+  window.generarReporte._v52 = true;
+}
+
+// Asegurar arranque en TODOS si no hay salida elegida y re-render inicial
+try {
+  if (typeof window.SALIDA_ACTUAL_V41==='undefined') window.SALIDA_ACTUAL_V41 = 0;
+  setTimeout(function(){
+    var ls = document.getElementById('loginScreen');
+    if (ls && ls.style.display==='none' && typeof renderEntregas==='function') renderEntregas();
+  }, 300);
+} catch(e){}
+
+console.log('[v52 salidas] OK — pestañas persistentes + vista cruzada + control por resta');
+})();
+
+</script>
+</body>
+</html>
